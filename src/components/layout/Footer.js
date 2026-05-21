@@ -1,111 +1,209 @@
+import Image from "next/image";
 import Link from "next/link";
+import { ChevronRight, Mail, MapPin, Phone } from "lucide-react";
 import { categories, navLinks, site } from "@/lib/site";
+import { getWhatsAppChatUrl } from "@/lib/whatsapp";
 import { IconInstagram, IconWhatsApp } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+
+function FooterHeading({ children }) {
+  return (
+    <h3 className="mb-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--color-gold)]">
+      <span className="h-px w-6 bg-[var(--color-gold)]/50" aria-hidden />
+      {children}
+    </h3>
+  );
+}
+
+function FooterLink({ href, children, external }) {
+  const className =
+    "group inline-flex items-center gap-1 text-sm text-[var(--color-cream)]/80 transition-colors hover:text-[var(--color-gold)]";
+  if (external) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+        {children}
+        <ChevronRight className="size-3 opacity-0 transition-opacity group-hover:opacity-70" />
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className}>
+      {children}
+      <ChevronRight className="size-3 opacity-0 transition-opacity group-hover:opacity-70" />
+    </Link>
+  );
+}
 
 export default function Footer() {
+  const whatsappUrl = getWhatsAppChatUrl();
+
   return (
-    <footer className="bg-[var(--color-primary)] text-[var(--color-cream)]/90 mt-auto">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
-          <div className="lg:col-span-1">
-            <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--color-accent-cream)]/80">
-              {site.brandLine}
-            </p>
-            <p className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-cream)] mb-3">
-              {site.brandName}
-            </p>
-            <p className="text-xs uppercase tracking-[0.2em] text-[var(--color-accent-cream)]/70 mb-3">
+    <footer className="relative mt-auto overflow-hidden bg-[var(--color-primary)] text-[var(--color-cream)]">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.07]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }}
+        aria-hidden
+      />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--color-gold)]/40 to-transparent" />
+
+      {/* WhatsApp CTA strip */}
+      <div className="relative border-b border-white/10 bg-black/15">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-6 sm:flex-row sm:px-6 lg:px-8">
+          <p className="text-center text-sm text-[var(--color-cream)]/90 sm:text-left">
+            <span className="font-semibold text-[var(--color-gold)]">Shop on WhatsApp</span>
+            {" — "}
+            We confirm orders & sizing in minutes.
+          </p>
+          <Button
+            variant="whatsapp"
+            size="pill-sm"
+            render={
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" />
+            }
+          >
+            <IconWhatsApp className="size-4" />
+            Chat now
+          </Button>
+        </div>
+      </div>
+
+      <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+        <div className="grid grid-cols-2 gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10">
+          {/* Brand */}
+          <div className="sm:col-span-2 lg:col-span-5">
+            <Link href="/" className="group inline-flex items-center gap-3">
+              <Image
+                src="/logo.png"
+                alt={site.name}
+                width={56}
+                height={56}
+                className="size-14 rounded-full object-contain ring-2 ring-white/15 transition-transform group-hover:scale-105"
+              />
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--color-cream)]/60">
+                  {site.brandLine}
+                </p>
+                <p className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-cream)] sm:text-3xl">
+                  {site.brandName}
+                </p>
+              </div>
+            </Link>
+            <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[var(--color-gold)]/90">
               {site.tagline}
             </p>
-            <p className="text-sm leading-relaxed text-[var(--color-cream)]/70 mb-6">
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-cream)]/75">
               {site.description}
             </p>
-            <div className="flex gap-3">
+
+            <div className="mt-6 flex flex-wrap gap-3">
               <a
                 href={site.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-[var(--color-primary-dark)] transition-colors"
-                aria-label="Instagram"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-medium transition-colors hover:border-white/30 hover:bg-white/15"
               >
-                <IconInstagram className="w-5 h-5" />
+                <IconInstagram className="size-4" />
+                {site.instagramHandle}
               </a>
-              <a
-                href={`https://wa.me/${site.whatsapp.replace(/\D/g, "")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-[#25D366] transition-colors"
-                aria-label="WhatsApp"
+              <Link
+                href="/instagram"
+                className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-medium text-[var(--color-cream)]/90 transition-colors hover:bg-white/10 hover:text-[var(--color-gold)]"
               >
-                <IconWhatsApp className="w-5 h-5" />
-              </a>
+                View feed
+              </Link>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-xs uppercase tracking-[0.2em] text-[var(--color-gold)] mb-4 font-semibold">
-              Shop
-            </h3>
-            <ul className="space-y-2.5 text-sm">
+          {/* Shop */}
+          <div className="lg:col-span-2">
+            <FooterHeading>Shop</FooterHeading>
+            <ul className="space-y-3">
               {categories.slice(0, 5).map((cat) => (
                 <li key={cat.slug}>
-                  <Link
-                    href={`/shop/${cat.slug}`}
-                    className="hover:text-[var(--color-gold)] transition-colors"
-                  >
-                    {cat.name}
-                  </Link>
+                  <FooterLink href={`/shop/${cat.slug}`}>{cat.name}</FooterLink>
                 </li>
               ))}
               <li>
-                <Link href="/shop" className="hover:text-[var(--color-gold)] transition-colors">
-                  View All
-                </Link>
+                <FooterLink href="/shop">View all products</FooterLink>
+              </li>
+              <li>
+                <FooterLink href="/collections">Collections</FooterLink>
               </li>
             </ul>
           </div>
 
-          <div>
-            <h3 className="text-xs uppercase tracking-[0.2em] text-[var(--color-gold)] mb-4 font-semibold">
-              Explore
-            </h3>
-            <ul className="space-y-2.5 text-sm">
+          {/* Explore */}
+          <div className="lg:col-span-2">
+            <FooterHeading>Explore</FooterHeading>
+            <ul className="space-y-3">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="hover:text-[var(--color-gold)] transition-colors">
-                    {link.label}
-                  </Link>
+                  <FooterLink href={link.href}>{link.label}</FooterLink>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div>
-            <h3 className="text-xs uppercase tracking-[0.2em] text-[var(--color-gold)] mb-4 font-semibold">
-              Contact
-            </h3>
-            <ul className="space-y-3 text-sm text-[var(--color-cream)]/70">
-              <li>{site.address}</li>
+          {/* Contact */}
+          <div className="sm:col-span-2 lg:col-span-3">
+            <FooterHeading>Visit us</FooterHeading>
+            <ul className="space-y-4 text-sm">
+              <li className="flex gap-3 text-[var(--color-cream)]/80">
+                <MapPin className="mt-0.5 size-4 shrink-0 text-[var(--color-gold)]" />
+                <span className="leading-relaxed">{site.address}</span>
+              </li>
               <li>
-                <a href={`tel:${site.phone.replace(/\s/g, "")}`} className="hover:text-[var(--color-gold)]">
+                <a
+                  href={`tel:${site.phone.replace(/\s/g, "")}`}
+                  className="flex items-center gap-3 text-[var(--color-cream)]/80 transition-colors hover:text-[var(--color-gold)]"
+                >
+                  <Phone className="size-4 shrink-0 text-[var(--color-gold)]" />
                   {site.phone}
                 </a>
               </li>
               <li>
-                <a href={`mailto:${site.email}`} className="hover:text-[var(--color-gold)]">
+                <a
+                  href={`mailto:${site.email}`}
+                  className="flex items-center gap-3 text-[var(--color-cream)]/80 transition-colors hover:text-[var(--color-gold)]"
+                >
+                  <Mail className="size-4 shrink-0 text-[var(--color-gold)]" />
                   {site.email}
                 </a>
               </li>
-              <li className="pt-2">
-                <span className="text-[var(--color-gold)]">{site.instagramHandle}</span>
-              </li>
             </ul>
+            <Link
+              href="/contact"
+              className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-gold)] hover:underline"
+            >
+              Directions & map
+              <ChevronRight className="size-3.5" />
+            </Link>
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between gap-4 text-xs text-[var(--color-cream)]/50">
-          <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
-          <p>Orders confirmed via WhatsApp · Pan-India shipping</p>
+        {/* Trust row */}
+        <div className="mt-12 flex flex-wrap justify-center gap-2 sm:justify-start lg:mt-14">
+          {["Free shipping", "100% quality", "WhatsApp orders", "Vijayawada store"].map(
+            (badge) => (
+              <span
+                key={badge}
+                className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--color-cream)]/70"
+              >
+                {badge}
+              </span>
+            ),
+          )}
+        </div>
+
+        <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-[var(--color-cream)]/50 sm:flex-row">
+          <p className="text-center sm:text-left">
+            © {new Date().getFullYear()} {site.name}. All rights reserved.
+          </p>
+          <p className="text-center sm:text-right">
+            Orders via WhatsApp · Pan-India shipping · Benz Circle, Vijayawada
+          </p>
         </div>
       </div>
     </footer>
