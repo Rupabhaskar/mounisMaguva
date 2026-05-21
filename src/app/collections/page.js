@@ -4,6 +4,7 @@ import { Sparkles } from "lucide-react";
 import CollectionCategoryCard from "@/components/collections/CollectionCategoryCard";
 import ProductGrid from "@/components/product/ProductGrid";
 import { Button } from "@/components/ui/button";
+import { fashionImages } from "@/lib/images";
 import { categories, site } from "@/lib/site";
 import { getNewArrivals } from "@/lib/products";
 
@@ -30,7 +31,7 @@ export default function CollectionsPage() {
       <section className="relative overflow-hidden bg-[var(--color-primary)] text-white">
         <div className="absolute inset-0 opacity-20">
           <Image
-            src="https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=1600&q=85"
+            src={fashionImages.collectionsBanner}
             alt=""
             fill
             className="object-cover"
@@ -64,7 +65,7 @@ export default function CollectionsPage() {
             </div>
             <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-2xl shadow-2xl lg:max-w-none">
               <Image
-                src="https://images.unsplash.com/photo-1583391733981-5b1502099ba3?w=1200&q=85"
+                src={fashionImages.sareeRed}
                 alt="Curated ethnic wear collection"
                 fill
                 className="object-cover"

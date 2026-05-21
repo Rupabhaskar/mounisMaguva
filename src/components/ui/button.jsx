@@ -24,8 +24,10 @@ const buttonVariants = cva(
           "rounded-full border-2 border-[var(--color-primary)] bg-transparent text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white",
         whatsapp:
           "rounded-full bg-[#25D366] text-white hover:bg-[#1da851] [a]:hover:bg-[#1da851]",
+        buyNow:
+          "rounded-lg bg-[#16a34a] text-white shadow-sm hover:bg-[#15803d] [a]:hover:bg-[#15803d]",
         promo:
-          "rounded-md bg-[#ff8c00] text-white shadow-sm hover:bg-[#e67e00] [a]:hover:bg-[#e67e00]",
+          "rounded-md bg-[var(--color-primary)] text-white shadow-sm hover:bg-[var(--color-primary-dark)] [a]:hover:bg-[var(--color-primary-dark)]",
       },
       size: {
         default:
@@ -35,6 +37,7 @@ const buttonVariants = cva(
         lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         pill: "h-11 gap-2 px-8 text-sm font-semibold",
         "pill-sm": "h-10 gap-1.5 px-5 text-sm font-semibold",
+        block: "h-12 w-full gap-2 rounded-lg px-6 text-base font-semibold",
         icon: "size-8",
         "icon-xs":
           "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",

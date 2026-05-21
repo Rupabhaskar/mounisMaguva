@@ -20,7 +20,7 @@ const badgeVariants = cva(
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-primary underline-offset-4 hover:underline",
         gold:
-          "h-auto rounded px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[var(--color-gold)] text-[var(--color-text)]",
+          "h-auto rounded px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[var(--color-accent-cream)] text-[var(--color-primary)]",
         sale:
           "h-auto rounded px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[var(--color-primary)] text-white",
       },

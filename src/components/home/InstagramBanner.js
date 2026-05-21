@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { site } from "@/lib/site";
 import { IconInstagram } from "@/components/icons";
 
@@ -16,15 +17,23 @@ export default function InstagramBanner() {
               See new arrivals, styling tips & customer looks on Instagram. Our collection
               comes alive on {site.instagramHandle}.
             </p>
-            <a
-              href={site.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-[var(--color-primary)] font-semibold rounded-full hover:bg-[var(--color-gold)] hover:text-[var(--color-text)] transition-colors"
-            >
-              <IconInstagram />
-              Follow {site.instagramHandle}
-            </a>
+            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link
+                href="/instagram"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 font-semibold text-[var(--color-primary)] transition-colors hover:bg-[var(--color-gold)] hover:text-[var(--color-text)]"
+              >
+                <IconInstagram />
+                View feed
+              </Link>
+              <a
+                href={site.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border-2 border-white/80 px-8 py-3.5 font-semibold text-white transition-colors hover:bg-white/10"
+              >
+                Follow {site.instagramHandle}
+              </a>
+            </div>
           </div>
         </div>
       </div>

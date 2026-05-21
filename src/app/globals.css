@@ -4,47 +4,49 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* MOUNI'S MAGUVA brand palette */
 :root {
-  --color-primary: #7b2d3e;
-  --color-primary-dark: #5c2230;
-  --color-gold: #c9a962;
-  --color-cream: #fdf8f4;
-  --color-surface: #f5ebe3;
-  --color-text: #2c1810;
-  --color-muted: #6b5b54;
-  --color-border: #e8ddd4;
-  --background: #fdf8f4;
-  --foreground: #2c1810;
+  --color-primary: #801818;
+  --color-primary-dark: #5c1010;
+  --color-accent-cream: #fff9f0;
+  --color-gold: #fff9f0;
+  --color-cream: #fcf5e5;
+  --color-surface: #f5ebdc;
+  --color-text: #2a1212;
+  --color-muted: #7a5555;
+  --color-border: #e5d5c3;
+  --background: #fcf5e5;
+  --foreground: #2a1212;
   --card: #ffffff;
-  --card-foreground: #2c1810;
-  --popover: #fdf8f4;
-  --popover-foreground: #2c1810;
-  --primary: #7b2d3e;
+  --card-foreground: #2a1212;
+  --popover: #fcf5e5;
+  --popover-foreground: #2a1212;
+  --primary: #801818;
   --primary-foreground: #ffffff;
-  --secondary: #f5ebe3;
-  --secondary-foreground: #2c1810;
-  --muted: #f5ebe3;
-  --muted-foreground: #6b5b54;
-  --accent: #f5ebe3;
-  --accent-foreground: #2c1810;
+  --secondary: #f5ebdc;
+  --secondary-foreground: #2a1212;
+  --muted: #f5ebdc;
+  --muted-foreground: #7a5555;
+  --accent: #f5ebdc;
+  --accent-foreground: #2a1212;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #e8ddd4;
-  --input: #e8ddd4;
-  --ring: #7b2d3e;
+  --border: #e5d5c3;
+  --input: #e5d5c3;
+  --ring: #801818;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #fcf5e5;
+  --sidebar-foreground: #2a1212;
+  --sidebar-primary: #801818;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f5ebdc;
+  --sidebar-accent-foreground: #2a1212;
+  --sidebar-border: #e5d5c3;
+  --sidebar-ring: #801818;
 }
 
 @theme inline {
@@ -125,7 +127,7 @@ body {
   }
 
   .badge-new {
-    @apply px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[var(--color-gold)] text-[var(--color-text)] rounded;
+    @apply px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[var(--color-accent-cream)] text-[var(--color-primary)] rounded;
   }
 
   .badge-sale {
@@ -162,37 +164,24 @@ body {
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: #2a1212;
+  --foreground: #fcf5e5;
+  --card: #3d1818;
+  --card-foreground: #fcf5e5;
+  --popover: #3d1818;
+  --popover-foreground: #fcf5e5;
+  --primary: #fcf5e5;
+  --primary-foreground: #801818;
+  --secondary: #5c1010;
+  --secondary-foreground: #fcf5e5;
+  --muted: #5c1010;
+  --muted-foreground: #d4b8b8;
+  --accent: #5c1010;
+  --accent-foreground: #fcf5e5;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --ring: #fcf5e5;
 }
 
 @layer base {

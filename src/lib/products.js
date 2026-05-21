@@ -1,3 +1,5 @@
+import { fashionImages } from "./images";
+
 /** @typedef {import('./site').CategorySlug} CategorySlug */
 
 /**
@@ -18,6 +20,8 @@
  * @property {boolean} isBestSeller
  * @property {boolean} inStock
  * @property {string[]} tags
+ * @property {string} [blouse]
+ * @property {import('./product-details').ColorOption[]} [colorOptions]
  */
 
 /** @type {Product[]} */
@@ -32,10 +36,7 @@ export const products = [
     price: 4500,
     originalPrice: 5200,
     category: "sarees",
-    images: [
-      "https://images.unsplash.com/photo-1583391733981-5b1502099ba3?w=1200&q=85",
-      "https://images.unsplash.com/photo-1617627143750-d86bc21e3510?w=1200&q=85",
-    ],
+    images: [fashionImages.sareeRed, fashionImages.sareeDrape],
     fabric: "Pure Silk",
     color: "Maroon & Gold",
     sizes: ["Free Size"],
@@ -43,6 +44,30 @@ export const products = [
     isBestSeller: true,
     inStock: true,
     tags: ["wedding", "silk", "festive"],
+    blouse: "Unstitched matching blouse piece (0.8m)",
+    colorOptions: [
+      {
+        id: "maroon",
+        label: "Maroon & Gold",
+        abbr: "MAR",
+        hex: "#801818",
+        available: true,
+      },
+      {
+        id: "wine",
+        label: "Wine Red",
+        abbr: "WIN",
+        hex: "#722F37",
+        available: true,
+      },
+      {
+        id: "gold",
+        label: "Gold Zari",
+        abbr: "GLD",
+        hex: "#C9A227",
+        available: false,
+      },
+    ],
   },
   {
     id: "2",
@@ -53,9 +78,7 @@ export const products = [
       "Classic Kanjivaram with rich temple border and contrast pallu. Handloom finish with premium drape.",
     price: 6800,
     category: "sarees",
-    images: [
-      "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=1200&q=85",
-    ],
+    images: [fashionImages.sareeGold],
     fabric: "Kanjivaram Silk",
     color: "Emerald Green",
     sizes: ["Free Size"],
@@ -74,9 +97,7 @@ export const products = [
     price: 3200,
     originalPrice: 3800,
     category: "sarees",
-    images: [
-      "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=1200&q=85",
-    ],
+    images: [fashionImages.sareePink],
     fabric: "Organza",
     color: "Blush Pink",
     sizes: ["Free Size"],
@@ -84,6 +105,37 @@ export const products = [
     isBestSeller: true,
     inStock: true,
     tags: ["lightweight", "party"],
+    blouse: "Contrast blouse piece with floral border",
+    colorOptions: [
+      {
+        id: "blush",
+        label: "Blush Pink",
+        abbr: "BLS",
+        hex: "#F4C2C2",
+        available: true,
+      },
+      {
+        id: "peach",
+        label: "Peach",
+        abbr: "PCH",
+        hex: "#FFCBA4",
+        available: true,
+      },
+      {
+        id: "mint",
+        label: "Mint Green",
+        abbr: "MNT",
+        hex: "#98D8C8",
+        available: true,
+      },
+      {
+        id: "navy",
+        label: "Navy Blue",
+        abbr: "NAV",
+        hex: "#1e3a5f",
+        available: false,
+      },
+    ],
   },
   {
     id: "4",
@@ -95,9 +147,7 @@ export const products = [
     price: 18500,
     originalPrice: 22000,
     category: "lehengas",
-    images: [
-      "https://images.unsplash.com/photo-1610030469983-7bf46ee832b8?w=1200&q=85",
-    ],
+    images: [fashionImages.lehengaBridal],
     fabric: "Velvet & Net",
     color: "Crimson Red",
     sizes: ["S", "M", "L", "XL"],
@@ -115,9 +165,7 @@ export const products = [
       "Vibrant teal lehenga with mirror embellishments. Lightweight and comfortable for sangeet nights.",
     price: 8900,
     category: "lehengas",
-    images: [
-      "https://images.unsplash.com/photo-1595777457583-95e059d581b1?w=1200&q=85",
-    ],
+    images: [fashionImages.lehengaFestive],
     fabric: "Georgette",
     color: "Teal Blue",
     sizes: ["S", "M", "L", "XL", "XXL"],
@@ -135,9 +183,7 @@ export const products = [
       "Flowing A-line gown with pearl detailing. A modern ethnic look for cocktail events.",
     price: 4200,
     category: "dresses",
-    images: [
-      "https://images.unsplash.com/photo-1595777457583-95e059d581b1?w=1200&q=85",
-    ],
+    images: [fashionImages.dressGown],
     fabric: "Georgette",
     color: "Ivory",
     sizes: ["S", "M", "L"],
@@ -156,9 +202,7 @@ export const products = [
     price: 3500,
     originalPrice: 4100,
     category: "dresses",
-    images: [
-      "https://images.unsplash.com/photo-1617627143750-d86bc21e3510?w=1200&q=85",
-    ],
+    images: [fashionImages.dressAnarkali],
     fabric: "Cotton Silk",
     color: "Mustard",
     sizes: ["S", "M", "L", "XL"],
@@ -176,9 +220,7 @@ export const products = [
       "Breathable cotton kurti with traditional block print. Perfect for daily wear and casual outings.",
     price: 1299,
     category: "kurtis",
-    images: [
-      "https://images.unsplash.com/photo-1617627143750-d86bc21e3510?w=1200&q=85",
-    ],
+    images: [fashionImages.kurtiIndigo],
     fabric: "Cotton",
     color: "Indigo White",
     sizes: ["S", "M", "L", "XL", "XXL"],
@@ -196,9 +238,7 @@ export const products = [
       "Soft peach kurti with thread embroidery on neckline and sleeves. Office-to-evening versatile.",
     price: 1899,
     category: "kurtis",
-    images: [
-      "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=1200&q=85",
-    ],
+    images: [fashionImages.kurtiPeach],
     fabric: "Rayon",
     color: "Peach",
     sizes: ["S", "M", "L", "XL"],
@@ -216,9 +256,7 @@ export const products = [
       "Rich brocade dupatta to elevate any outfit. Versatile pairing with sarees and lehengas.",
     price: 1499,
     category: "dupattas",
-    images: [
-      "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=1200&q=85",
-    ],
+    images: [fashionImages.dupatta],
     fabric: "Brocade",
     color: "Gold",
     sizes: ["Free Size"],
@@ -236,9 +274,7 @@ export const products = [
       "Gradient lavender chiffon with sequin border. Easy drape for parties and pujas.",
     price: 2500,
     category: "sarees",
-    images: [
-      "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=1200&q=85",
-    ],
+    images: [fashionImages.sareeLavender],
     fabric: "Chiffon",
     color: "Lavender",
     sizes: ["Free Size"],
@@ -257,9 +293,7 @@ export const products = [
     price: 7200,
     originalPrice: 8500,
     category: "lehengas",
-    images: [
-      "https://images.unsplash.com/photo-1610030469983-7bf46ee832b8?w=1200&q=85",
-    ],
+    images: [fashionImages.lehengaParty],
     fabric: "Net",
     color: "Rose Gold",
     sizes: ["S", "M", "L"],

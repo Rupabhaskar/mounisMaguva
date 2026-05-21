@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { fashionImages } from "@/lib/images";
 import { site } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 
@@ -9,8 +10,8 @@ export default function Hero() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid min-h-[70vh] items-center gap-8 py-12 lg:grid-cols-2 lg:gap-12 lg:py-16">
           <div className="order-2 text-center lg:order-1 lg:text-left">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-gold)] sm:text-sm">
-              Premium Indian Ethnic Wear
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-[var(--color-primary)] sm:text-sm">
+              {site.tagline}
             </p>
             <h1 className="mb-5 font-[family-name:var(--font-display)] text-4xl leading-tight text-[var(--color-primary)] sm:text-5xl lg:text-6xl">
               Timeless elegance for every celebration
@@ -37,7 +38,7 @@ export default function Hero() {
           </div>
           <div className="relative order-1 mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-2xl shadow-2xl lg:order-2 lg:max-w-none lg:max-h-[520px]">
             <Image
-              src="https://images.unsplash.com/photo-1583391733981-5b1502099ba3?w=1200&q=85"
+              src={fashionImages.hero}
               alt="Woman in premium ethnic saree"
               fill
               className="object-cover"

@@ -15,7 +15,7 @@ function HorizontalPromoCard({ promo }) {
   return (
     <Link
       href={promo.href}
-      className="group flex h-full min-h-[168px] overflow-hidden rounded-2xl bg-[#f5e6d3] sm:min-h-[190px]"
+      className="group flex h-full min-h-[168px] overflow-hidden rounded-2xl bg-[var(--color-surface)] sm:min-h-[190px]"
     >
       <div className="relative min-h-[168px] w-[42%] shrink-0 sm:w-[40%]">
         <Image
@@ -27,7 +27,7 @@ function HorizontalPromoCard({ promo }) {
         />
       </div>
       <div className="flex flex-1 flex-col justify-center px-4 py-4 sm:px-6">
-        <p className="text-sm font-semibold text-red-600">{promo.discount}</p>
+        <p className="text-sm font-semibold text-[var(--color-primary)]">{promo.discount}</p>
         <h3 className="mt-1 text-base font-bold leading-snug text-gray-900 sm:text-lg">
           {promo.title}
         </h3>
@@ -41,10 +41,10 @@ function FeaturedPromoCard({ promo }) {
   return (
     <Link
       href={promo.href}
-      className="group flex h-full min-h-[340px] flex-col overflow-hidden rounded-2xl bg-[#f5e6d3] lg:min-h-full"
+      className="group flex h-full min-h-[340px] flex-col overflow-hidden rounded-2xl bg-[var(--color-surface)] lg:min-h-full"
     >
       <div className="flex shrink-0 flex-col items-center px-6 pt-8 pb-4 text-center sm:pt-10">
-        <p className="text-sm font-semibold text-red-600">{promo.discount}</p>
+        <p className="text-sm font-semibold text-[var(--color-primary)]">{promo.discount}</p>
         <h3 className="mt-2 max-w-[240px] text-lg font-bold leading-snug text-gray-900 sm:text-xl">
           {promo.title}
         </h3>

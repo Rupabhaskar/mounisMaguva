@@ -140,6 +140,24 @@ export default function ContactPage() {
           </CardContent>
         </Card>
       </div>
+
+      <section className="mx-auto mt-14 max-w-4xl">
+        <h2 className="section-title mb-2 text-center">Find us</h2>
+        <p className="section-subtitle mx-auto mb-6 max-w-lg text-center">
+          {site.address}
+        </p>
+        <div className="overflow-hidden rounded-2xl border border-[var(--color-border)] shadow-md">
+          <iframe
+            src={site.mapEmbedUrl}
+            title="Mouni's Maguva store location on Google Maps"
+            className="aspect-[4/3] w-full min-h-[280px] sm:aspect-video sm:min-h-[360px]"
+            style={{ border: 0 }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+      </section>
     </div>
   );
 }

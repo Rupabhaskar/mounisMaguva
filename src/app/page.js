@@ -26,7 +26,7 @@ export default function HomePage() {
         products={bestSellers}
         viewAllHref="/shop"
       />
-      <InstagramBanner />
+      {/* <InstagramBanner /> */}
     </>
   );
 }

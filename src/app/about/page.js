@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { fashionImages } from "@/lib/images";
 import { site } from "@/lib/site";
 
 export const metadata = {
@@ -13,7 +14,7 @@ export default function AboutPage() {
       <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
         <div className="relative aspect-[4/5] rounded-2xl overflow-hidden">
           <Image
-            src="https://images.unsplash.com/photo-1617627143750-d86bc21e3510?w=1200&q=85"
+            src={fashionImages.fashionEditorial}
             alt="Ethnic wear craftsmanship"
             fill
             className="object-cover"

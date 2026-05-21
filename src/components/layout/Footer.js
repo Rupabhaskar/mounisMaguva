@@ -4,12 +4,18 @@ import { IconInstagram, IconWhatsApp } from "@/components/icons";
 
 export default function Footer() {
   return (
-    <footer className="bg-[var(--color-text)] text-[var(--color-cream)]/90 mt-auto">
+    <footer className="bg-[var(--color-primary)] text-[var(--color-cream)]/90 mt-auto">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
           <div className="lg:col-span-1">
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--color-accent-cream)]/80">
+              {site.brandLine}
+            </p>
             <p className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-cream)] mb-3">
-              Maguva Ethnics
+              {site.brandName}
+            </p>
+            <p className="text-xs uppercase tracking-[0.2em] text-[var(--color-accent-cream)]/70 mb-3">
+              {site.tagline}
             </p>
             <p className="text-sm leading-relaxed text-[var(--color-cream)]/70 mb-6">
               {site.description}
@@ -19,7 +25,7 @@ export default function Footer() {
                 href={site.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-[var(--color-primary)] transition-colors"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-[var(--color-primary-dark)] transition-colors"
                 aria-label="Instagram"
               >
                 <IconInstagram className="w-5 h-5" />

@@ -7,7 +7,7 @@ import { formatPrice } from "./format";
  */
 export function buildWhatsAppOrderMessage(items, customer = {}) {
   const lines = [
-    `Hello ${site.name}! 👋`,
+    `Hello ${site.name}!`,
     "",
     "I would like to place an order:",
     "",
