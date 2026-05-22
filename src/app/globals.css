@@ -134,6 +134,10 @@ body {
     @apply px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[var(--color-primary)] text-white rounded;
   }
 
+  .badge-hot {
+    animation: hotGlow 2.8s ease-in-out infinite;
+  }
+
   .animate-fade-in {
     animation: fadeIn 0.4s ease-out;
   }
@@ -269,6 +273,18 @@ body {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes hotGlow {
+  0%,
+  100% {
+    box-shadow: 0 3px 14px rgba(234, 88, 12, 0.45);
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(251, 191, 36, 0.6);
+    filter: brightness(1.08);
   }
 }
 

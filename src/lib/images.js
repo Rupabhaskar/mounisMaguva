@@ -1,33 +1,36 @@
+/** Base path for assets in public/Maguva Images */
+const MAGUVA_DIR = "/Maguva Images";
+
 /**
- * Verified fashion / ethnic-wear image URLs (Pexels + stable Unsplash).
- * @param {number} id Pexels photo id
- * @param {number} [w=1200]
+ * Local Maguva product & marketing image (image1.jpg … image27.jpg, image15.png).
+ * @param {number} index 1–27
  */
-export function pexels(id, w = 1200) {
-  return `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&w=${w}`;
+export function maguvaImage(index) {
+  const ext = index === 15 ? "png" : "jpg";
+  return `${MAGUVA_DIR}/image${index}.${ext}`;
 }
 
-/** @param {string} slug Unsplash photo slug (id-suffix) */
-export function unsplash(slug, w = 1200) {
-  return `https://images.unsplash.com/photo-${slug}?auto=format&fit=crop&w=${w}&q=85`;
-}
+/** All 27 Maguva images — useful for galleries and Instagram fallbacks */
+export const maguvaGallery = Array.from({ length: 27 }, (_, i) =>
+  maguvaImage(i + 1),
+);
 
-/** Curated pool — all URLs return 200 */
+/** Curated aliases used across hero, products, collections, and about */
 export const fashionImages = {
-  sareeRed: pexels(6311658),
-  sareeDrape: pexels(1926769),
-  sareeGold: unsplash("1601924994987-69e26d50dc26"),
-  sareePink: unsplash("1566174053879-31528523f8ae"),
-  sareeLavender: pexels(6311392),
-  lehengaBridal: pexels(1485031),
-  lehengaFestive: pexels(7671166),
-  lehengaParty: pexels(994523),
-  dressGown: pexels(1536619),
-  dressAnarkali: pexels(1183266),
-  kurtiIndigo: pexels(1126994),
-  kurtiPeach: pexels(985635),
-  dupatta: pexels(267280),
-  fashionEditorial: unsplash("1490481651871-ab68de25d43d"),
-  hero: pexels(6311658, 1400),
-  collectionsBanner: pexels(1926769, 1600),
+  sareeRed: maguvaImage(1),
+  sareeDrape: maguvaImage(2),
+  sareeGold: maguvaImage(3),
+  sareePink: maguvaImage(4),
+  sareeLavender: maguvaImage(5),
+  lehengaBridal: maguvaImage(6),
+  lehengaFestive: maguvaImage(7),
+  lehengaParty: maguvaImage(8),
+  dressGown: maguvaImage(9),
+  dressAnarkali: maguvaImage(10),
+  kurtiIndigo: maguvaImage(11),
+  kurtiPeach: maguvaImage(12),
+  dupatta: maguvaImage(13),
+  fashionEditorial: maguvaImage(14),
+  hero: maguvaImage(1),
+  collectionsBanner: maguvaImage(16),
 };

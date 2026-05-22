@@ -1,4 +1,4 @@
-import { pexels } from "./images";
+import { fashionImages, maguvaImage } from "./images";
 
 /** @typedef {'sarees' | 'lehengas' | 'dresses' | 'kurtis' | 'dupattas' | 'new-arrivals'} CategorySlug */
 
@@ -36,7 +36,7 @@ export const categoryPromos = [
     href: "/shop/sarees",
     discount: "Get 30% off",
     title: "Women's Latest Saree Collection",
-    image: pexels(6311658, 800),
+    image: fashionImages.sareeRed,
     layout: "horizontal",
   },
   {
@@ -44,7 +44,7 @@ export const categoryPromos = [
     href: "/shop/kurtis",
     discount: "Get 40% off",
     title: "Women's Latest Kurti Collection",
-    image: pexels(1126994, 800),
+    image: fashionImages.kurtiIndigo,
     layout: "horizontal",
   },
   {
@@ -52,7 +52,7 @@ export const categoryPromos = [
     href: "/shop/lehengas",
     discount: "Get 30% off",
     title: "Best Collection for Festive & Bridal",
-    image: pexels(1485031, 800),
+    image: fashionImages.lehengaBridal,
     layout: "featured",
   },
 ];
@@ -62,42 +62,42 @@ export const categories = [
     slug: "sarees",
     name: "Sarees",
     description: "Silk, cotton & designer drapes",
-    image: pexels(6311658, 800),
+    image: maguvaImage(17),
     count: 48,
   },
   {
     slug: "lehengas",
     name: "Lehengas",
     description: "Festive & bridal ensembles",
-    image: pexels(1485031, 800),
+    image: maguvaImage(18),
     count: 21,
   },
   {
     slug: "dresses",
     name: "Dresses",
     description: "Indo-western & ethnic gowns",
-    image: pexels(1536619, 800),
+    image: maguvaImage(19),
     count: 23,
   },
   {
     slug: "kurtis",
     name: "Kurtis",
     description: "Everyday elegance",
-    image: pexels(985635, 800),
+    image: maguvaImage(20),
     count: 32,
   },
   {
     slug: "dupattas",
     name: "Dupattas",
     description: "Complete your look",
-    image: pexels(267280, 800),
+    image: maguvaImage(21),
     count: 15,
   },
   {
     slug: "new-arrivals",
     name: "New Arrivals",
     description: "Fresh from our studio",
-    image: pexels(985635, 800),
+    image: maguvaImage(22),
     count: 12,
   },
 ];

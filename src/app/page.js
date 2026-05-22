@@ -19,6 +19,7 @@ export default function HomePage() {
         subtitle="Fresh pieces from our studio"
         products={newArrivals}
         viewAllHref="/shop/new-arrivals"
+        scroll={false}
       />
       <FeaturedSection
         title="Best Sellers"

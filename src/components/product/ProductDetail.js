@@ -17,6 +17,7 @@ import {
 } from "@/lib/product-details";
 import { getWhatsAppInquiryUrl, getWhatsAppOrderUrl } from "@/lib/whatsapp";
 import { Badge } from "@/components/ui/badge";
+import HotBadge from "@/components/product/HotBadge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import ProductImageGallery from "@/components/product/ProductImageGallery";
@@ -129,6 +130,7 @@ export default function ProductDetail({ product, related = [] }) {
           images={product.images}
           alt={product.name}
           isNew={product.isNew}
+          isBestSeller={product.isBestSeller}
           discount={discount}
           selectedIndex={selectedImage}
           onSelectIndex={setSelectedImage}
@@ -153,6 +155,10 @@ export default function ProductDetail({ product, related = [] }) {
             )}
             {discount && (
               <Badge variant="sale">-{discount}%</Badge>
+            )}
+            {product.isBestSeller && <HotBadge />}
+            {product.isNew && (
+              <Badge variant="gold">New</Badge>
             )}
           </div>
 

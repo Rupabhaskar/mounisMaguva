@@ -81,16 +81,16 @@ export default function Hero() {
   });
   const [index, setIndex] = useState(0);
 
-  const onSelect = useCallback(() => {
-    if (emblaApi) setIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
   useEffect(() => {
     if (!emblaApi) return;
-    onSelect();
-    emblaApi.on("select", onSelect);
-    return () => emblaApi.off("select", onSelect);
-  }, [emblaApi, onSelect]);
+    const syncIndex = () => setIndex(emblaApi.selectedScrollSnap());
+    emblaApi.on("select", syncIndex);
+    emblaApi.on("reInit", syncIndex);
+    return () => {
+      emblaApi.off("select", syncIndex);
+      emblaApi.off("reInit", syncIndex);
+    };
+  }, [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;

@@ -5,6 +5,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Maximize2, Minus, Plus, RotateCcw, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import HotBadge from "@/components/product/HotBadge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +21,7 @@ export default function ProductImageGallery({
   images,
   alt,
   isNew,
+  isBestSeller,
   discount,
   selectedIndex,
   onSelectIndex,
@@ -218,10 +220,11 @@ export default function ProductImageGallery({
                 priority={i === 0}
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
-              {i === selectedIndex && isNew && (
-                <Badge variant="gold" className="absolute top-4 left-4 z-10">
-                  New
-                </Badge>
+              {i === selectedIndex && (isBestSeller || isNew) && (
+                <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5">
+                  {isBestSeller && <HotBadge />}
+                  {isNew && <Badge variant="gold">New</Badge>}
+                </div>
               )}
               {i === selectedIndex && discount && (
                 <Badge variant="sale" className="absolute top-4 right-4 z-10">
