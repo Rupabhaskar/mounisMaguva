@@ -5,18 +5,17 @@ import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { fashionImages } from "@/lib/images";
 import { site } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const slides = [
+const fallbackSlides = [
   {
     title: "Timeless elegance for every celebration",
     description:
       "Handpicked sarees, lehengas and kurtis — curated for weddings, festivals and everyday grace.",
     cta: { label: "Shop collection", href: "/shop" },
-    image: fashionImages.sareeRed,
+    image: "/Maguva Images/image1.jpg",
     alt: "Ethnic saree collection",
   },
   {
@@ -24,7 +23,7 @@ const slides = [
     description:
       "Rich zardozi, mirror work and silk — made for your most unforgettable day.",
     cta: { label: "Shop lehengas", href: "/shop/lehengas" },
-    image: fashionImages.lehengaBridal,
+    image: "/Maguva Images/image6.jpg",
     alt: "Bridal lehenga",
   },
   {
@@ -32,7 +31,7 @@ const slides = [
     description:
       "Light drapes and bold colours — ready for sangeet, puja and party nights.",
     cta: { label: "Shop sarees", href: "/shop/sarees" },
-    image: fashionImages.sareePink,
+    image: "/Maguva Images/image4.jpg",
     alt: "Festive saree",
   },
   {
@@ -40,7 +39,7 @@ const slides = [
     description:
       "Soft cotton and rayon — comfort you can wear from morning to evening.",
     cta: { label: "Shop kurtis", href: "/shop/kurtis" },
-    image: fashionImages.kurtiPeach,
+    image: "/Maguva Images/image12.jpg",
     alt: "Kurti collection",
   },
 ];
@@ -73,7 +72,7 @@ function SlideDots({ count, index, onSelect, className }) {
   );
 }
 
-export default function Hero() {
+export default function Hero({ slides: slidesProp }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     duration: 25,
@@ -99,6 +98,7 @@ export default function Hero() {
   }, [emblaApi]);
 
   const scrollTo = useCallback((i) => emblaApi?.scrollTo(i), [emblaApi]);
+  const slides = slidesProp?.length ? slidesProp : fallbackSlides;
   const slide = slides[index];
 
   return (

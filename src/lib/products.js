@@ -1,4 +1,5 @@
 import { fashionImages, maguvaImage } from "./images";
+import { COLLECTIONS, listCollection } from "@/lib/firestore";
 
 /** @typedef {import('./site').CategorySlug} CategorySlug */
 
@@ -304,38 +305,61 @@ export const products = [
   },
 ];
 
+async function getFirestoreProducts() {
+  try {
+    const docs = await listCollection(COLLECTIONS.products, {
+      orderBy: "updatedAt",
+      direction: "desc",
+    });
+    if (!docs.length) return [];
+    return docs;
+  } catch {
+    return [];
+  }
+}
+
+export async function getAllProducts() {
+  const firestoreProducts = await getFirestoreProducts();
+  return firestoreProducts.length ? firestoreProducts : products;
+}
+
 /**
  * @param {string} slug
  * @returns {Product | undefined}
  */
-export function getProductBySlug(slug) {
-  return products.find((p) => p.slug === slug);
+export async function getProductBySlug(slug) {
+  const all = await getAllProducts();
+  return all.find((p) => p.slug === slug);
 }
 
 /**
  * @param {CategorySlug | 'all'} category
  * @returns {Product[]}
  */
-export function getProductsByCategory(category) {
+export async function getProductsByCategory(category) {
+  const all = await getAllProducts();
   if (category === "all" || category === "new-arrivals") {
     if (category === "new-arrivals") {
-      return products.filter((p) => p.isNew);
+      return all.filter((p) => p.isNew);
     }
-    return products;
+    return all;
   }
-  return products.filter((p) => p.category === category);
+  return all.filter((p) => p.category === category);
 }
 
-export function getNewArrivals(limit = 8) {
-  return products.filter((p) => p.isNew).slice(0, limit);
+export async function getNewArrivals(limit = 8) {
+  const all = await getAllProducts();
+  return all.filter((p) => p.isNew).slice(0, limit);
 }
 
-export function getBestSellers(limit = 8) {
-  return products.filter((p) => p.isBestSeller).slice(0, limit);
+export async function getBestSellers(limit = 8) {
+  const all = await getAllProducts();
+  return all.filter((p) => p.isBestSeller).slice(0, limit);
 }
 
-export function getRelatedProducts(product, limit = 4) {
-  return products
+export async function getRelatedProducts(product, limit = 4) {
+  const all = await getAllProducts();
+  return all
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, limit);
 }

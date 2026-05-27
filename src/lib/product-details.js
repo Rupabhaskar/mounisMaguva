@@ -15,7 +15,26 @@ export function getColorOptions(product) {
   if (product.colorOptions?.length) {
     return product.colorOptions;
   }
-  const abbr = product.color
+  if (product.colors?.length) {
+    return product.colors.map((label, index) => {
+      const colorLabel = String(label).trim();
+      const abbr = colorLabel
+        .split(/[\s/&]+/)
+        .map((w) => w[0])
+        .join("")
+        .slice(0, 3)
+        .toUpperCase();
+      return {
+        id: `color-${index}`,
+        label: colorLabel,
+        abbr: abbr || "CLR",
+        hex: "#801818",
+        available: product.inStock !== false,
+      };
+    });
+  }
+  const colorLabel = product.color?.trim() || "Standard";
+  const abbr = colorLabel
     .split(/[\s/&]+/)
     .map((w) => w[0])
     .join("")
@@ -24,7 +43,7 @@ export function getColorOptions(product) {
   return [
     {
       id: "default",
-      label: product.color,
+      label: colorLabel,
       abbr: abbr || "STD",
       hex: "#801818",
       available: product.inStock,
@@ -42,6 +61,14 @@ export function getProductBullets(product, colorCount) {
       label: "About",
       value: product.description,
     },
+    ...(product.fabric
+      ? [
+          {
+            label: "Fabric",
+            value: product.fabric,
+          },
+        ]
+      : []),
     {
       label: "Blouse",
       value: product.blouse ?? "Matching blouse piece included (where applicable)",

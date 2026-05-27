@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import ProductImageGallery from "@/components/product/ProductImageGallery";
 import ProductInfoCards from "@/components/product/ProductInfoCards";
+import { getImagesForColor, getProductThumbnail } from "@/lib/product-images";
 import { cn } from "@/lib/utils";
 
 const WISHLIST_KEY = "maguva-wishlist";
@@ -29,7 +30,7 @@ const WISHLIST_KEY = "maguva-wishlist";
 export default function ProductDetail({ product, related = [] }) {
   const { addItem } = useCart();
   const [selectedImage, setSelectedImage] = useState(0);
-  const [size, setSize] = useState(product.sizes[0]);
+  const [size, setSize] = useState(product.sizes?.[0] || "");
   const [quantity, setQuantity] = useState(1);
   const colorOptions = useMemo(() => getColorOptions(product), [product]);
   const [selectedColorId, setSelectedColorId] = useState(
@@ -39,6 +40,30 @@ export default function ProductDetail({ product, related = [] }) {
 
   const selectedColor =
     colorOptions.find((c) => c.id === selectedColorId) ?? colorOptions[0];
+
+  const galleryImages = useMemo(
+    () => getImagesForColor(product, selectedColor?.label),
+    [product, selectedColor?.label],
+  );
+
+  const sizesForSelectedColor = useMemo(() => {
+    const label = selectedColor?.label;
+    const override = label && product?.colorSizes?.[label];
+    if (Array.isArray(override) && override.length) return override;
+    return Array.isArray(product?.sizes) ? product.sizes : [];
+  }, [product, selectedColor?.label]);
+
+  useEffect(() => {
+    startTransition(() => {
+      setSelectedImage(0);
+      setSize((prev) =>
+        sizesForSelectedColor.includes(prev)
+          ? prev
+          : sizesForSelectedColor[0] || "",
+      );
+    });
+  }, [selectedColorId, sizesForSelectedColor]);
+
   const discount = formatDiscount(product.originalPrice, product.price);
   const bullets = getProductBullets(product, colorOptions.length);
   const inquiryUrl = getWhatsAppInquiryUrl(product.name, product.sku);
@@ -63,7 +88,7 @@ export default function ProductDetail({ product, related = [] }) {
       sku: product.sku,
       name: `${product.name} (${colorLabel})`,
       price: product.price,
-      image: product.images[0],
+      image: galleryImages[0] || getProductThumbnail(product),
       size,
       quantity,
     };
@@ -127,7 +152,7 @@ export default function ProductDetail({ product, related = [] }) {
 
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-14">
         <ProductImageGallery
-          images={product.images}
+          images={galleryImages.length ? galleryImages : [getProductThumbnail(product)]}
           alt={product.name}
           isNew={product.isNew}
           isBestSeller={product.isBestSeller}
@@ -243,7 +268,7 @@ export default function ProductDetail({ product, related = [] }) {
               Size
             </Label>
             <div className="flex flex-wrap gap-2">
-              {product.sizes.map((s) => (
+              {sizesForSelectedColor.map((s) => (
                 <button
                   key={s}
                   type="button"
@@ -341,7 +366,7 @@ export default function ProductDetail({ product, related = [] }) {
               <Link key={p.id} href={`/product/${p.slug}`} className="group">
                 <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-[var(--color-surface)]">
                   <Image
-                    src={p.images[0]}
+                    src={getProductThumbnail(p)}
                     alt={p.name}
                     fill
                     className="object-cover transition-transform group-hover:scale-105"

@@ -1,6 +1,6 @@
 import ProductGrid from "@/components/product/ProductGrid";
 import { categories } from "@/lib/site";
-import { products } from "@/lib/products";
+import { getAllProducts } from "@/lib/products";
 import Link from "next/link";
 
 export const metadata = {
@@ -8,7 +8,8 @@ export const metadata = {
   description: "Browse our full collection of sarees, lehengas, dresses and more.",
 };
 
-export default function ShopPage() {
+export default async function ShopPage() {
+  const products = await getAllProducts();
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
       <div className="text-center mb-10">

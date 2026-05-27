@@ -2,9 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import CollectionCategoryCard from "@/components/collections/CollectionCategoryCard";
+import OfferBanners from "@/components/home/OfferBanners";
 import ProductGrid from "@/components/product/ProductGrid";
 import { Button } from "@/components/ui/button";
-import { fashionImages } from "@/lib/images";
+import { getActiveBanners } from "@/lib/banners";
+import { getImageOverrideMap } from "@/lib/media-overrides";
 import { categories, site } from "@/lib/site";
 import { getNewArrivals } from "@/lib/products";
 
@@ -21,8 +23,12 @@ const occasions = [
   { label: "New Arrivals", href: "/shop/new-arrivals" },
 ];
 
-export default function CollectionsPage() {
-  const highlights = getNewArrivals(8);
+export default async function CollectionsPage() {
+  const [highlights, imageMap, collectionBanners] = await Promise.all([
+    getNewArrivals(8),
+    getImageOverrideMap(),
+    getActiveBanners("collections"),
+  ]);
   const [sarees, lehengas, dresses, kurtis, dupattas, newArrivals] = categories;
 
   return (
@@ -31,7 +37,7 @@ export default function CollectionsPage() {
       <section className="relative overflow-hidden bg-[var(--color-primary)] text-white">
         <div className="absolute inset-0 opacity-20">
           <Image
-            src={fashionImages.collectionsBanner}
+            src={imageMap["fashionImages.collectionsBanner"]}
             alt=""
             fill
             className="object-cover"
@@ -65,7 +71,7 @@ export default function CollectionsPage() {
             </div>
             <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-2xl shadow-2xl lg:max-w-none">
               <Image
-                src={fashionImages.sareeRed}
+                src={imageMap["fashionImages.sareeRed"]}
                 alt="Curated ethnic wear collection"
                 fill
                 className="object-cover"
@@ -75,6 +81,8 @@ export default function CollectionsPage() {
           </div>
         </div>
       </section>
+
+      <OfferBanners banners={collectionBanners} />
 
       {/* Shop by occasion */}
       <section className="border-b border-[var(--color-border)] bg-white py-8">

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { fashionImages } from "@/lib/images";
+import { getImageByAlias } from "@/lib/media-overrides";
 import { site } from "@/lib/site";
 
 export const metadata = {
@@ -8,13 +8,14 @@ export const metadata = {
   description: `Learn about ${site.name} — premium ethnic wear for women.`,
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const editorialImage = await getImageByAlias("fashionImages.fashionEditorial");
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
       <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
         <div className="relative aspect-[4/5] rounded-2xl overflow-hidden">
           <Image
-            src={fashionImages.fashionEditorial}
+            src={editorialImage}
             alt="Ethnic wear craftsmanship"
             fill
             className="object-cover"

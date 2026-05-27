@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { formatDiscount, formatPrice } from "@/lib/format";
+import { getProductThumbnail } from "@/lib/product-images";
 import { Badge } from "@/components/ui/badge";
 import HotBadge from "@/components/product/HotBadge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ export default function ProductCard({ product }) {
   const { addItem } = useCart();
   const discount = formatDiscount(product.originalPrice, product.price);
   const defaultSize = product.sizes[0];
+  const thumbnail = getProductThumbnail(product);
 
   function handleAddToCart(e) {
     e.preventDefault();
@@ -23,7 +25,7 @@ export default function ProductCard({ product }) {
       sku: product.sku,
       name: product.name,
       price: product.price,
-      image: product.images[0],
+      image: thumbnail,
       size: defaultSize,
       quantity: 1,
     });
@@ -34,7 +36,7 @@ export default function ProductCard({ product }) {
       <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-[var(--color-surface)]">
         <Link href={`/product/${product.slug}`} className="absolute inset-0 z-0">
           <Image
-            src={product.images[0]}
+            src={thumbnail}
             alt={product.name}
             fill
             className="object-cover transition-transform duration-500 group-hover/card:scale-105"
