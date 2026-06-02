@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getFirebaseClientAuth } from "@/lib/firebase/client";
 
 function mapAuthError(code) {
@@ -27,13 +27,15 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
   const [hintUid, setHintUid] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/auth/session")
+    fetch("/api/admin/auth/session", { credentials: "include" })
       .then((res) => {
         if (res.ok) router.replace("/admin");
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setCheckingSession(false));
   }, [router]);
 
   async function handleSubmit(event) {
@@ -41,13 +43,14 @@ export default function AdminLoginPage() {
     setError("");
     setHintUid("");
     setLoading(true);
+    const auth = getFirebaseClientAuth();
     try {
-      const auth = getFirebaseClientAuth();
-      const credential = await signInWithEmailAndPassword(auth, email, password);
+      const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
       const idToken = await credential.user.getIdToken(true);
 
       const response = await fetch("/api/admin/auth/login", {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ idToken }),
       });
@@ -55,11 +58,13 @@ export default function AdminLoginPage() {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
+        await signOut(auth).catch(() => {});
         if (data.uid) setHintUid(data.uid);
         throw new Error(data.error || "Login failed");
       }
 
-      router.push("/admin");
+      await signOut(auth).catch(() => {});
+      router.replace("/admin");
       router.refresh();
     } catch (submitError) {
       const code = submitError?.code;
@@ -67,6 +72,14 @@ export default function AdminLoginPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (checkingSession) {
+    return (
+      <div className="mx-auto flex min-h-screen w-full max-w-md items-center justify-center px-4">
+        <p className="text-sm text-[var(--color-muted)]">Checking session…</p>
+      </div>
+    );
   }
 
   return (

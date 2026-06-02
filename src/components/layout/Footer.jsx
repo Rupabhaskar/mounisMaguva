@@ -75,11 +75,11 @@ export default function Footer() {
           <div className="sm:col-span-2 lg:col-span-5">
             <Link href="/" className="group inline-flex items-center gap-3">
               <Image
-                src="/logo.png"
+                src="/Mounis Logo.png"
                 alt={site.name}
-                width={56}
-                height={56}
-                className="size-14 rounded-full object-contain ring-2 ring-white/15 transition-transform group-hover:scale-105"
+                width={96}
+                height={96}
+                className="size-20 rounded-full object-contain ring-2 ring-white/15 transition-transform group-hover:scale-105"
               />
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--color-cream)]/60">

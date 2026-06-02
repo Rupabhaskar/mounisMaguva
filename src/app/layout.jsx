@@ -1,4 +1,4 @@
-import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import { Cormorant_Garamond, DM_Sans, Dancing_Script } from "next/font/google";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
@@ -18,6 +18,12 @@ const body = DM_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
+const script = Dancing_Script({
+  variable: "--font-script",
+  subsets: ["latin"],
+  weight: ["700"],
+});
+
 export const metadata = {
   title: {
     default: `${site.name} | ${site.tagline}`,
@@ -33,7 +39,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${script.variable}`}>
       <body className="min-h-screen flex flex-col antialiased">
         <Providers>
           <AnnouncementBar />

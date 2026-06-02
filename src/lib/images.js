@@ -1,5 +1,5 @@
-/** Base path for assets in public/Maguva Images */
-const MAGUVA_DIR = "/Maguva Images";
+/** Base path for assets in public/Maguva Images (encoded for next/image) */
+const MAGUVA_DIR = "/Maguva%20Images";
 
 /**
  * Local Maguva product & marketing image (image1.jpg … image27.jpg, image15.png).

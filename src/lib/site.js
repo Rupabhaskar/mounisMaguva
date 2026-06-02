@@ -1,14 +1,14 @@
 import { fashionImages, maguvaImage } from "./images";
 
-/** @typedef {'sarees' | 'lehengas' | 'dresses' | 'kurtis' | 'dupattas' | 'new-arrivals'} CategorySlug */
+/** @typedef {'sarees' | 'three-piece-sets' | 'dresses' | 'kurtis' | 'dupattas' | 'new-arrivals'} CategorySlug */
 
 export const site = {
   name: "Mouni's Maguva",
-  brandLine: "MOUNI'S",
+  brandLine: "mounis",
   brandName: "MAGUVA",
   tagline: "Style for Every Occasion",
   description:
-    "Discover handpicked sarees, lehengas, dresses and kurtis. Curated ethnic wear with timeless Indian craftsmanship.",
+    "Discover handpicked sarees, 3 piece sets, dresses and kurtis. Curated ethnic wear with timeless Indian craftsmanship.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://maguvaethnics.com",
   whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "918500947079",
   instagram: "https://www.instagram.com/maguva_ethinics",
@@ -48,11 +48,11 @@ export const categoryPromos = [
     layout: "horizontal",
   },
   {
-    slug: "lehengas",
-    href: "/shop/lehengas",
+    slug: "three-piece-sets",
+    href: "/shop/three-piece-sets",
     discount: "Get 30% off",
-    title: "Best Collection for Festive & Bridal",
-    image: fashionImages.lehengaBridal,
+    title: "3 Pices Sets for Every Occasion",
+    image: maguvaImage(18),
     layout: "featured",
   },
 ];
@@ -66,11 +66,11 @@ export const categories = [
     count: 48,
   },
   {
-    slug: "lehengas",
-    name: "Lehengas",
-    description: "Festive & bridal ensembles",
+    slug: "three-piece-sets",
+    name: "3 Pices Sets",
+    description: "Ready-to-wear 3 piece outfits",
     image: maguvaImage(18),
-    count: 21,
+    count: 18,
   },
   {
     slug: "dresses",

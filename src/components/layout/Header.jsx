@@ -24,20 +24,20 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-cream)]/95 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-surface)] backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-4 sm:h-18">
           <Link href="/" className="group flex shrink-0 items-center gap-2.5 sm:gap-3">
             <Image
-              src="/logo.png"
+              src="/Mounis Logo.png"
               alt={site.name}
-              width={48}
-              height={48}
-              className="h-10 w-10 rounded-full object-contain sm:h-12 sm:w-12"
+              width={90}
+              height= {90}
+              className="h-16 w-16 rounded-full object-contain sm:h-18 sm:w-18"
               priority
             />
             <div className="flex flex-col leading-none">
-              <span className="text-[9px] font-semibold uppercase tracking-[0.28em] text-[var(--color-muted)] sm:text-[10px]">
+              <span className="font-[family-name:var(--font-script)] text-base font-bold leading-none text-[var(--color-muted)] sm:text-lg">
                 {site.brandLine}
               </span>
               <span className="font-[family-name:var(--font-display)] text-xl font-bold tracking-wide text-[var(--color-primary)] transition-colors group-hover:text-[var(--color-primary-dark)] sm:text-2xl">

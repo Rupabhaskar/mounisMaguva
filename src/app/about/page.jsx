@@ -28,7 +28,7 @@ export default async function AboutPage() {
             <p>
               <strong className="text-[var(--color-text)]">{site.name}</strong> was born from a
               love of Indian textiles and the women who wear them with pride. We curate sarees,
-              lehengas, and everyday ethnic pieces that balance tradition with modern style.
+              3 piece sets, and everyday ethnic pieces that balance tradition with modern style.
             </p>
             <p>
               Every design in our collection is selected for fabric feel, fit, and how it

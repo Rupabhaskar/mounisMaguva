@@ -5,6 +5,7 @@ import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useState } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { maguvaImage } from "@/lib/images";
 import { site } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,25 +14,25 @@ const fallbackSlides = [
   {
     title: "Timeless elegance for every celebration",
     description:
-      "Handpicked sarees, lehengas and kurtis — curated for weddings, festivals and everyday grace.",
+      "Handpicked sarees, 3 piece sets and kurtis — curated for weddings, festivals and everyday grace.",
     cta: { label: "Shop collection", href: "/shop" },
-    image: "/Maguva Images/image1.jpg",
+    image: maguvaImage(1),
     alt: "Ethnic saree collection",
   },
   {
-    title: "Bridal lehengas that turn every head",
+    title: "3 piece sets that turn every head",
     description:
-      "Rich zardozi, mirror work and silk — made for your most unforgettable day.",
-    cta: { label: "Shop lehengas", href: "/shop/lehengas" },
-    image: "/Maguva Images/image6.jpg",
-    alt: "Bridal lehenga",
+      "Co-ord kurta sets with dupatta — made for your most unforgettable day.",
+    cta: { label: "Shop 3 piece sets", href: "/shop/three-piece-sets" },
+    image: maguvaImage(6),
+    alt: "3 piece set",
   },
   {
     title: "Festive looks for every occasion",
     description:
       "Light drapes and bold colours — ready for sangeet, puja and party nights.",
     cta: { label: "Shop sarees", href: "/shop/sarees" },
-    image: "/Maguva Images/image4.jpg",
+    image: maguvaImage(4),
     alt: "Festive saree",
   },
   {
@@ -39,7 +40,7 @@ const fallbackSlides = [
     description:
       "Soft cotton and rayon — comfort you can wear from morning to evening.",
     cta: { label: "Shop kurtis", href: "/shop/kurtis" },
-    image: "/Maguva Images/image12.jpg",
+    image: maguvaImage(12),
     alt: "Kurti collection",
   },
 ];
@@ -104,14 +105,14 @@ export default function Hero({ slides: slidesProp }) {
   return (
     <section className="bg-[var(--color-surface)]">
       <div className="mx-auto max-w-7xl lg:px-8">
-        <div className="flex flex-col lg:grid lg:min-h-[min(85vh,720px)] lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-6 lg:py-16">
+        <div className="flex flex-col lg:grid lg:min-h-[min(74vh,640px)] lg:grid-cols-2 lg:items-center lg:gap-10 lg:px-6 lg:py-12 xl:min-h-[min(85vh,720px)] xl:gap-16 xl:py-16">
           {/* Carousel — full bleed on mobile */}
           <div className="group relative order-1 w-full lg:order-2">
             <div
               ref={emblaRef}
               className="overflow-hidden shadow-md ring-1 ring-black/5 max-lg:rounded-none lg:rounded-2xl lg:shadow-lg"
             >
-              <div className="flex aspect-[3/4] max-h-[min(58vh,440px)] sm:aspect-[4/5] sm:max-h-[min(62vh,480px)] lg:aspect-[4/5] lg:max-h-none">
+              <div className="flex aspect-[3/4] max-h-[min(58vh,440px)] sm:aspect-[4/5] sm:max-h-[min(62vh,480px)] lg:aspect-[16/11] lg:max-h-[540px] xl:aspect-[4/5] xl:max-h-none">
                 {slides.map((s, i) => (
                   <div key={s.title} className="relative min-h-0 min-w-0 flex-[0_0_100%]">
                     <div
@@ -180,15 +181,15 @@ export default function Hero({ slides: slidesProp }) {
             </p>
 
             <div key={index} className="animate-hero-rise">
-              <h1 className="font-[family-name:var(--font-display)] text-[1.65rem] leading-[1.2] text-[var(--color-primary)] sm:text-4xl sm:leading-tight lg:text-[3.25rem]">
+              <h1 className="font-[family-name:var(--font-display)] text-[1.65rem] leading-[1.2] text-[var(--color-primary)] sm:text-4xl sm:leading-tight lg:text-[2.6rem] lg:leading-[1.12] xl:text-[3.25rem] xl:leading-tight">
                 {slide.title}
               </h1>
-              <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-muted)] sm:mt-5 sm:max-w-md sm:text-base lg:mx-0">
+              <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-muted)] sm:mt-5 sm:max-w-md sm:text-base lg:mx-0 lg:max-w-lg">
                 {slide.description}
               </p>
             </div>
 
-            <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:justify-center lg:justify-start">
+            <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:justify-center lg:mt-7 lg:justify-start">
               <Button
                 variant="brand"
                 size="block"

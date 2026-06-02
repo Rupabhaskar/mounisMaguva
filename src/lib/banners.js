@@ -1,11 +1,12 @@
 import { COLLECTIONS, listCollection } from "@/lib/firestore";
+import { maguvaImage } from "@/lib/images";
 
 const fallbackBanners = [
   {
     id: "fallback-home-offer",
     title: "Festive Offer",
     subtitle: "Up to 30% off on selected styles",
-    imageUrl: "/Maguva Images/image16.jpg",
+    imageUrl: maguvaImage(16),
     href: "/shop/new-arrivals",
     isActive: true,
     placement: "home",

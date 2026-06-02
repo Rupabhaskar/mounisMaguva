@@ -1,17 +1,14 @@
 import CategoryGrid from "@/components/home/CategoryGrid";
 import FeaturedSection from "@/components/home/FeaturedSection";
 import Hero from "@/components/home/Hero";
-import OfferBanners from "@/components/home/OfferBanners";
 import TrustBar from "@/components/home/TrustBar";
 import { getBestSellers, getNewArrivals } from "@/lib/products";
-import { getActiveBanners } from "@/lib/banners";
 import { getImageOverrideMap } from "@/lib/media-overrides";
 
 export default async function HomePage() {
-  const [newArrivals, bestSellers, homeBanners, imageMap] = await Promise.all([
+  const [newArrivals, bestSellers, imageMap] = await Promise.all([
     getNewArrivals(8),
     getBestSellers(8),
-    getActiveBanners("home"),
     getImageOverrideMap(),
   ]);
 
@@ -19,18 +16,18 @@ export default async function HomePage() {
     {
       title: "Timeless elegance for every celebration",
       description:
-        "Handpicked sarees, lehengas and kurtis — curated for weddings, festivals and everyday grace.",
+        "Handpicked sarees, 3 piece sets and kurtis — curated for weddings, festivals and everyday grace.",
       cta: { label: "Shop collection", href: "/shop" },
       image: imageMap["fashionImages.sareeRed"],
       alt: "Ethnic saree collection",
     },
     {
-      title: "Bridal lehengas that turn every head",
+      title: "3 piece sets that turn every head",
       description:
-        "Rich zardozi, mirror work and silk — made for your most unforgettable day.",
-      cta: { label: "Shop lehengas", href: "/shop/lehengas" },
+        "Co-ord kurta sets with dupatta — made for your most unforgettable day.",
+      cta: { label: "Shop 3 piece sets", href: "/shop/three-piece-sets" },
       image: imageMap["fashionImages.lehengaBridal"],
-      alt: "Bridal lehenga",
+      alt: "3 piece set",
     },
     {
       title: "Festive looks for every occasion",
@@ -54,7 +51,6 @@ export default async function HomePage() {
     <>
       <Hero slides={heroSlides} />
       <TrustBar />
-      <OfferBanners banners={homeBanners} />
       <CategoryGrid />
       <FeaturedSection
         title="Latest Arrivals"

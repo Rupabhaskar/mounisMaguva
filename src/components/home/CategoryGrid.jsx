@@ -80,7 +80,7 @@ export default function CategoryGrid() {
         <div className="mb-8 text-center lg:mb-10">
           <h2 className="section-title">Shop by Category</h2>
           <p className="section-subtitle mx-auto mt-2">
-            Sarees, lehengas, dresses & more — curated for every occasion
+            Sarees, 3 piece sets, dresses & more — curated for every occasion
           </p>
         </div>
 

@@ -2,10 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import CollectionCategoryCard from "@/components/collections/CollectionCategoryCard";
-import OfferBanners from "@/components/home/OfferBanners";
 import ProductGrid from "@/components/product/ProductGrid";
 import { Button } from "@/components/ui/button";
-import { getActiveBanners } from "@/lib/banners";
 import { getImageOverrideMap } from "@/lib/media-overrides";
 import { categories, site } from "@/lib/site";
 import { getNewArrivals } from "@/lib/products";
@@ -16,7 +14,7 @@ export const metadata = {
 };
 
 const occasions = [
-  { label: "Wedding & Bridal", href: "/shop/lehengas" },
+  { label: "3 Piece Sets", href: "/shop/three-piece-sets" },
   { label: "Festive Sarees", href: "/shop/sarees" },
   { label: "Daily Kurtis", href: "/shop/kurtis" },
   { label: "Indo-Western", href: "/shop/dresses" },
@@ -24,12 +22,17 @@ const occasions = [
 ];
 
 export default async function CollectionsPage() {
-  const [highlights, imageMap, collectionBanners] = await Promise.all([
+  const [highlights, imageMap] = await Promise.all([
     getNewArrivals(8),
     getImageOverrideMap(),
-    getActiveBanners("collections"),
   ]);
-  const [sarees, lehengas, dresses, kurtis, dupattas, newArrivals] = categories;
+  const bySlug = Object.fromEntries(categories.map((c) => [c.slug, c]));
+  const sarees = bySlug["sarees"];
+  const threePieceSets = bySlug["three-piece-sets"];
+  const dresses = bySlug["dresses"];
+  const kurtis = bySlug["kurtis"];
+  const dupattas = bySlug["dupattas"];
+  const newArrivals = bySlug["new-arrivals"];
 
   return (
     <>
@@ -57,7 +60,7 @@ export default async function CollectionsPage() {
                 Our Collections
               </h1>
               <p className="mt-5 max-w-lg text-base leading-relaxed text-white/85 sm:text-lg">
-                From bridal lehengas to everyday kurtis — every piece is chosen for fabric,
+                From 3 piece sets to everyday kurtis — every piece is chosen for fabric,
                 drape, and how it photographs on {site.instagramHandle}.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -81,8 +84,6 @@ export default async function CollectionsPage() {
           </div>
         </div>
       </section>
-
-      <OfferBanners banners={collectionBanners} />
 
       {/* Shop by occasion */}
       <section className="border-b border-[var(--color-border)] bg-white py-8">
@@ -131,15 +132,17 @@ export default async function CollectionsPage() {
               size="large"
               className="col-span-2 row-span-2 md:col-span-2 md:row-span-2"
             />
-            <CollectionCategoryCard
-              href={`/shop/${lehengas.slug}`}
-              name={lehengas.name}
-              description={lehengas.description}
-              image={lehengas.image}
-              count={lehengas.count}
-              size="medium"
-              className="col-span-2 md:col-span-2 md:row-span-1"
-            />
+            {threePieceSets ? (
+              <CollectionCategoryCard
+                href={`/shop/${threePieceSets.slug}`}
+                name={threePieceSets.name}
+                description={threePieceSets.description}
+                image={threePieceSets.image}
+                count={threePieceSets.count}
+                size="medium"
+                className="col-span-2 md:col-span-2 md:row-span-1"
+              />
+            ) : null}
             <CollectionCategoryCard
               href={`/shop/${dresses.slug}`}
               name={dresses.name}

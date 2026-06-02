@@ -140,40 +140,40 @@ export const products = [
   },
   {
     id: "4",
-    slug: "bridal-lehenga-crimson-gold",
-    sku: "ME-L001",
-    name: "Bridal Lehenga Set — Crimson & Gold",
+    slug: "three-piece-set-ivory-gota",
+    sku: "ME-3P001",
+    name: "3 Pices Set — Ivory Gota Kurta Set",
     description:
-      "Heavy embroidered lehenga with dupatta and blouse. Intricate zardozi work for your special day.",
-    price: 18500,
-    originalPrice: 22000,
-    category: "lehengas",
-    images: [fashionImages.lehengaBridal, maguvaImage(25)],
-    fabric: "Velvet & Net",
-    color: "Crimson Red",
+      "Elegant kurta, pants and dupatta set with gota detailing. Perfect for festive evenings and family functions.",
+    price: 4999,
+    originalPrice: 5799,
+    category: "three-piece-sets",
+    images: [maguvaImage(25), maguvaImage(26)],
+    fabric: "Cotton Silk",
+    color: "Ivory Gold",
     sizes: ["S", "M", "L", "XL"],
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ["bridal", "wedding"],
+    tags: ["festive", "set", "gota"],
   },
   {
     id: "5",
-    slug: "festive-lehenga-teal-mirror",
-    sku: "ME-L002",
-    name: "Festive Lehenga — Teal Mirror Work",
+    slug: "three-piece-set-teal-embroidered",
+    sku: "ME-3P002",
+    name: "3 Pices Set — Teal Embroidered Kurta Set",
     description:
-      "Vibrant teal lehenga with mirror embellishments. Lightweight and comfortable for sangeet nights.",
-    price: 8900,
-    category: "lehengas",
-    images: [fashionImages.lehengaFestive, maguvaImage(26)],
+      "Teal kurta set with delicate embroidery and a soft dupatta. Lightweight, comfortable, and camera-ready.",
+    price: 4599,
+    category: "three-piece-sets",
+    images: [maguvaImage(27), maguvaImage(18)],
     fabric: "Georgette",
-    color: "Teal Blue",
+    color: "Teal",
     sizes: ["S", "M", "L", "XL", "XXL"],
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ["festive", "party"],
+    tags: ["party", "set", "embroidered"],
   },
   {
     id: "6",
@@ -254,7 +254,7 @@ export const products = [
     sku: "ME-DP001",
     name: "Banarasi Dupatta — Gold Brocade",
     description:
-      "Rich brocade dupatta to elevate any outfit. Versatile pairing with sarees and lehengas.",
+      "Rich brocade dupatta to elevate any outfit. Versatile pairing with sarees and 3 piece sets.",
     price: 1499,
     category: "dupattas",
     images: [fashionImages.dupatta, maguvaImage(20)],
@@ -286,22 +286,22 @@ export const products = [
   },
   {
     id: "12",
-    slug: "party-lehenga-rose-gold",
-    sku: "ME-L003",
-    name: "Party Lehenga — Rose Gold Sequin",
+    slug: "three-piece-set-rose-gold-sequin",
+    sku: "ME-3P003",
+    name: "3 Pices Set — Rose Gold Sequin Set",
     description:
-      "Glamorous rose gold lehenga with all-over sequins. Turn heads at every celebration.",
-    price: 7200,
-    originalPrice: 8500,
-    category: "lehengas",
-    images: [fashionImages.lehengaParty, maguvaImage(18)],
-    fabric: "Net",
+      "Glamorous 3 piece set with subtle sequins and a matching dupatta. A statement look for celebrations.",
+    price: 5299,
+    originalPrice: 6299,
+    category: "three-piece-sets",
+    images: [maguvaImage(18), maguvaImage(19)],
+    fabric: "Net & Crepe",
     color: "Rose Gold",
     sizes: ["S", "M", "L"],
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ["party", "sequin"],
+    tags: ["party", "set", "sequin"],
   },
 ];
 
@@ -320,7 +320,20 @@ async function getFirestoreProducts() {
 
 export async function getAllProducts() {
   const firestoreProducts = await getFirestoreProducts();
-  return firestoreProducts.length ? firestoreProducts : products;
+  // Keep your existing dummy catalog AND newly added Firestore items.
+  // Prefer Firestore versions when there's a slug match (user may edit/add same product).
+  if (!firestoreProducts.length) return products;
+
+  const bySlug = new Map();
+  for (const p of products) {
+    const key = p?.slug || p?.id;
+    if (key) bySlug.set(key, p);
+  }
+  for (const p of firestoreProducts) {
+    const key = p?.slug || p?.id;
+    if (key) bySlug.set(key, p);
+  }
+  return Array.from(bySlug.values());
 }
 
 /**
