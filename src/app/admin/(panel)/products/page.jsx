@@ -8,6 +8,8 @@ import { getProductThumbnail } from "@/lib/product-images";
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState([]);
+  const [maxProducts, setMaxProducts] = useState(30);
+  const [canAdd, setCanAdd] = useState(true);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -16,6 +18,8 @@ export default function AdminProductsPage() {
     const response = await fetch("/api/admin/products", { cache: "no-store" });
     const data = await response.json();
     setProducts(data.products || []);
+    setMaxProducts(data.maxProducts ?? 30);
+    setCanAdd(data.canAdd !== false);
     setLoading(false);
   }
 
@@ -52,13 +56,27 @@ export default function AdminProductsPage() {
             Products
           </h1>
           <p className="mt-1 text-sm text-[var(--color-muted)]">
-            {loading ? "Loading..." : `${filtered.length} product${filtered.length === 1 ? "" : "s"}`}
+            {loading
+              ? "Loading..."
+              : `${products.length} / ${maxProducts} products${!canAdd ? " (limit reached)" : ""}`}
           </p>
         </div>
-        <Link href="/admin/products/new" className="btn-primary text-sm">
-          Add product
-        </Link>
+        {canAdd ? (
+          <Link href="/admin/products/new" className="btn-primary text-sm">
+            Add product
+          </Link>
+        ) : (
+          <span className="rounded-full border border-[var(--color-border)] px-4 py-2 text-sm text-[var(--color-muted)]">
+            Limit reached ({maxProducts})
+          </span>
+        )}
       </div>
+
+      {!loading && !canAdd ? (
+        <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          You can store up to {maxProducts} products. Delete one to add another.
+        </p>
+      ) : null}
 
       <input
         className="input-field max-w-md"

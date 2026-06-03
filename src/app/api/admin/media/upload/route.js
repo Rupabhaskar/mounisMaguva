@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { COLLECTIONS, dbNow, setDocument } from "@/lib/firestore";
+import { uploadImageToCloudinary } from "@/lib/cloudinary";
 import { requireAdminApi, jsonError } from "@/lib/admin-api";
-import { getFirebaseAdminStorage } from "@/lib/firebase/admin";
 
 export async function POST(request) {
   const { error } = await requireAdminApi(request);
@@ -18,22 +18,10 @@ export async function POST(request) {
     }
 
     const mediaId = randomUUID();
-    const ext = file.name.includes(".") ? file.name.split(".").pop() : "jpg";
-    const storagePath = `admin-media/${mediaId}.${ext}`;
     const bytes = Buffer.from(await file.arrayBuffer());
-
-    const bucket = getFirebaseAdminStorage().bucket();
-    const blob = bucket.file(storagePath);
-    await blob.save(bytes, {
-      metadata: {
-        contentType: file.type || "application/octet-stream",
-      },
-      resumable: false,
-    });
-
-    const [url] = await blob.getSignedUrl({
-      action: "read",
-      expires: "03-09-2491",
+    const uploaded = await uploadImageToCloudinary(bytes, {
+      folder: "mounis-maguva/media",
+      filename: mediaId,
     });
 
     const usageTags = String(usageTagsRaw || "")
@@ -43,15 +31,18 @@ export async function POST(request) {
 
     await setDocument(COLLECTIONS.media, mediaId, {
       id: mediaId,
-      url,
-      storagePath,
+      url: uploaded.url,
+      storagePath: uploaded.publicId,
       usageTags,
       altText,
       createdAt: dbNow(),
       updatedAt: dbNow(),
     });
 
-    return NextResponse.json({ ok: true, media: { id: mediaId, url, storagePath } });
+    return NextResponse.json({
+      ok: true,
+      media: { id: mediaId, url: uploaded.url, storagePath: uploaded.publicId },
+    });
   } catch (routeError) {
     return jsonError(routeError);
   }

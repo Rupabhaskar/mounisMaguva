@@ -12,6 +12,7 @@ import {
   SingleSuggestionField,
 } from "@/components/admin/SuggestionField";
 import { getColorImagesMap, pruneColorImages } from "@/lib/product-images";
+import { sanitizeColorImages, validateColorImages } from "@/lib/sanitize-color-images";
 
 const SIZE_SUGGESTIONS = ["Free Size", "S", "M", "L", "XL", "XXL"];
 
@@ -140,7 +141,7 @@ export default function ProductForm({ mode = "create", product }) {
           ...product,
           sizes: normalizeSizes(product.sizes),
           colors: normalizeColors(product),
-          colorImages: getColorImagesMap(product),
+          colorImages: sanitizeColorImages(getColorImagesMap(product)),
           colorSizes: normalizeColorSizes(product),
           tags: normalizeTags(product.tags),
         }
@@ -158,11 +159,15 @@ export default function ProductForm({ mode = "create", product }) {
       setFormError("Add at least one size.");
       return;
     }
-    const colorImages = pruneColorImages(values.colorImages, values.colors);
-    const hasImages = Object.values(colorImages).some((urls) => urls?.length);
-    if (values.colors.length && !hasImages) {
-      setFormError("Add at least one image URL for your colors.");
-      return;
+    const colorImages = sanitizeColorImages(
+      pruneColorImages(values.colorImages, values.colors),
+    );
+    if (values.colors.length) {
+      const imageError = validateColorImages(colorImages, values.colors);
+      if (imageError) {
+        setFormError(imageError);
+        return;
+      }
     }
     setSubmitting(true);
     const payload = {
@@ -186,11 +191,17 @@ export default function ProductForm({ mode = "create", product }) {
     const isEdit = mode === "edit";
     const url = isEdit ? `/api/admin/products/${product.id}` : "/api/admin/products";
     const method = isEdit ? "PUT" : "POST";
-    await fetch(url, {
+    const response = await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setFormError(data.error || "Could not save product.");
+      setSubmitting(false);
+      return;
+    }
     router.push("/admin/products");
     router.refresh();
   }

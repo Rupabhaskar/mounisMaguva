@@ -7,42 +7,56 @@ import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 
-function getServiceAccountJson() {
-  const filePath = process.env.FIREBASE_ADMIN_SERVICE_ACCOUNT_PATH;
-  if (filePath) {
-    const absolutePath = resolve(process.cwd(), filePath);
-    return readFileSync(absolutePath, "utf8");
-  }
-
-  const raw = process.env.FIREBASE_ADMIN_SERVICE_ACCOUNT_KEY;
-  if (!raw) {
-    throw new Error(
-      "Missing FIREBASE_ADMIN_SERVICE_ACCOUNT_PATH or FIREBASE_ADMIN_SERVICE_ACCOUNT_KEY",
-    );
-  }
-  return raw;
+function readServiceAccountFile(filePath) {
+  const absolutePath = resolve(/* turbopackIgnore: true */ process.cwd(), filePath);
+  return readFileSync(absolutePath, "utf8");
 }
 
 function getServiceAccountFromEnv() {
-  const parsed = JSON.parse(getServiceAccountJson());
-  const projectId = parsed.project_id || process.env.FIREBASE_PROJECT_ID;
-  const clientEmail = parsed.client_email;
-  const privateKey = parsed.private_key?.replace(/\\n/g, "\n");
+  const projectId =
+    process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
 
-  if (!projectId || !clientEmail || !privateKey) {
-    throw new Error("Invalid FIREBASE_ADMIN_SERVICE_ACCOUNT_KEY");
+  if (projectId && clientEmail && privateKey) {
+    return { projectId, clientEmail, privateKey };
   }
 
-  return {
-    projectId,
-    clientEmail,
-    privateKey,
-  };
+  const raw = process.env.FIREBASE_ADMIN_SERVICE_ACCOUNT_KEY;
+  if (raw) {
+    const parsed = JSON.parse(raw);
+    return {
+      projectId: parsed.project_id || projectId,
+      clientEmail: parsed.client_email,
+      privateKey: parsed.private_key?.replace(/\\n/g, "\n"),
+    };
+  }
+
+  const filePath = process.env.FIREBASE_ADMIN_SERVICE_ACCOUNT_PATH;
+  if (filePath) {
+    const parsed = JSON.parse(readServiceAccountFile(filePath));
+    return {
+      projectId: parsed.project_id || projectId,
+      clientEmail: parsed.client_email,
+      privateKey: parsed.private_key?.replace(/\\n/g, "\n"),
+    };
+  }
+
+  throw new Error(
+    "Missing Firebase Admin credentials. Set FIREBASE_CLIENT_EMAIL + FIREBASE_PRIVATE_KEY, FIREBASE_ADMIN_SERVICE_ACCOUNT_KEY, or FIREBASE_ADMIN_SERVICE_ACCOUNT_PATH.",
+  );
+}
+
+function assertServiceAccount(credentials) {
+  if (!credentials.projectId || !credentials.clientEmail || !credentials.privateKey) {
+    throw new Error("Invalid Firebase Admin service account credentials");
+  }
+  return credentials;
 }
 
 export function getFirebaseAdminApp() {
   if (!getApps().length) {
-    const credential = cert(getServiceAccountFromEnv());
+    const credential = cert(assertServiceAccount(getServiceAccountFromEnv()));
     const storageBucket =
       process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ||
       process.env.FIREBASE_STORAGE_BUCKET;

@@ -1,3 +1,4 @@
+import { MAX_PRODUCTS } from "./constants";
 import { fashionImages, maguvaImage } from "./images";
 import { COLLECTIONS, listCollection } from "@/lib/firestore";
 
@@ -322,7 +323,7 @@ export async function getAllProducts() {
   const firestoreProducts = await getFirestoreProducts();
   // Keep your existing dummy catalog AND newly added Firestore items.
   // Prefer Firestore versions when there's a slug match (user may edit/add same product).
-  if (!firestoreProducts.length) return products;
+  if (!firestoreProducts.length) return products.slice(0, MAX_PRODUCTS);
 
   const bySlug = new Map();
   for (const p of products) {
@@ -333,7 +334,7 @@ export async function getAllProducts() {
     const key = p?.slug || p?.id;
     if (key) bySlug.set(key, p);
   }
-  return Array.from(bySlug.values());
+  return Array.from(bySlug.values()).slice(0, MAX_PRODUCTS);
 }
 
 /**

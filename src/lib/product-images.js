@@ -1,3 +1,4 @@
+import { MAX_IMAGES_PER_COLOR } from "@/lib/constants";
 import { maguvaImage } from "@/lib/images";
 
 /**
@@ -123,7 +124,7 @@ export function pruneColorImages(colorImages, colors) {
   const next = {};
   colors.forEach((color) => {
     if (colorImages[color]?.length) {
-      next[color] = colorImages[color];
+      next[color] = colorImages[color].slice(0, MAX_IMAGES_PER_COLOR);
     }
   });
   return next;

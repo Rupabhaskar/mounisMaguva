@@ -1,7 +1,10 @@
 import Link from "next/link";
 import ProductForm from "@/components/admin/ProductForm";
+import { canAddProduct, MAX_PRODUCTS } from "@/lib/product-limits";
 
-export default function AdminProductCreatePage() {
+export default async function AdminProductCreatePage() {
+  const allowed = await canAddProduct();
+
   return (
     <section className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -12,7 +15,21 @@ export default function AdminProductCreatePage() {
           ← Back to products
         </Link>
       </div>
-      <ProductForm mode="create" />
+
+      {allowed ? (
+        <ProductForm mode="create" />
+      ) : (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-900">
+          <p className="font-medium">Product limit reached</p>
+          <p className="mt-2">
+            You can only have {MAX_PRODUCTS} products. Delete an existing product before adding a
+            new one.
+          </p>
+          <Link href="/admin/products" className="btn-primary mt-4 inline-flex text-sm">
+            Back to products
+          </Link>
+        </div>
+      )}
     </section>
   );
 }
