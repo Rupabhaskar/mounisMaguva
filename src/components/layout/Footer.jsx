@@ -60,7 +60,7 @@ export default function Footer() {
             variant="whatsapp"
             size="pill-sm"
             render={
-              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" />
+              <a href={whatsappUrl} rel="noopener noreferrer" />
             }
           >
             <IconWhatsApp className="size-4" />

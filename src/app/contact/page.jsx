@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { site } from "@/lib/site";
-import { getWhatsAppChatUrl } from "@/lib/whatsapp";
+import { getWhatsAppChatUrl, getWhatsAppSendUrl } from "@/lib/whatsapp";
 import { IconInstagram, IconWhatsApp } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,8 +29,7 @@ export default function ContactPage() {
       "",
       form.message,
     ].join("\n");
-    const phone = site.whatsapp.replace(/\D/g, "");
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank");
+    window.location.href = getWhatsAppSendUrl(text);
   }
 
   return (
@@ -48,7 +47,6 @@ export default function ContactPage() {
           <Card className="border-[var(--color-border)] transition-colors hover:border-[#25D366]">
             <a
               href={getWhatsAppChatUrl()}
-              target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-4 p-2"
             >

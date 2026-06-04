@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/format";
+import { copyProductImagesForWhatsApp } from "@/lib/whatsapp-images";
 import { getWhatsAppOrderUrl } from "@/lib/whatsapp";
-import { openWhatsAppWithProductImages } from "@/lib/whatsapp-images";
 import { IconMinus, IconPlus, IconWhatsApp } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,13 +47,14 @@ export default function CartDrawer() {
     image: i.image,
   }));
 
-  function handleWhatsAppOrder() {
-    if (!items.length) return;
+  const checkoutUrl =
+    items.length > 0
+      ? getWhatsAppOrderUrl(whatsappItems, { name, phone, note })
+      : "#";
 
-    openWhatsAppWithProductImages({
-      url: getWhatsAppOrderUrl(whatsappItems, { name, phone, note }),
-      imageSources: items.map((item) => item.image),
-    });
+  function handleWhatsAppOrderClick() {
+    if (!items.length) return;
+    void copyProductImagesForWhatsApp(items.map((item) => item.image));
   }
 
   return (
@@ -209,9 +210,14 @@ export default function CartDrawer() {
                 <Button
                   variant="whatsapp"
                   size="pill"
-                  type="button"
                   className="w-full"
-                  onClick={handleWhatsAppOrder}
+                  render={
+                    <a
+                      href={checkoutUrl}
+                      rel="noopener noreferrer"
+                      onClick={handleWhatsAppOrderClick}
+                    />
+                  }
                 >
                   <IconWhatsApp className="size-5" />
                   Order on WhatsApp

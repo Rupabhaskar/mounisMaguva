@@ -15,8 +15,11 @@ import {
   getColorOptions,
   getProductBullets,
 } from "@/lib/product-details";
-import { getWhatsAppInquiryUrl, getWhatsAppOrderUrl } from "@/lib/whatsapp";
-import { openWhatsAppWithProductImages } from "@/lib/whatsapp-images";
+import {
+  getWhatsAppInquiryUrl,
+  getWhatsAppOrderUrl,
+  openWhatsApp,
+} from "@/lib/whatsapp";
 import { Badge } from "@/components/ui/badge";
 import HotBadge from "@/components/product/HotBadge";
 import { Button } from "@/components/ui/button";
@@ -120,10 +123,7 @@ export default function ProductDetail({ product, related = [] }) {
     const url = getWhatsAppOrderUrl([item], {
       note: `Buy now — Color: ${selectedColor.label}`,
     });
-    openWhatsAppWithProductImages({
-      url,
-      imageSources: [item.image],
-    });
+    openWhatsApp(url, { copyImageSources: [item.image] });
   }
 
   function handleWhatsAppInquiry() {
@@ -133,10 +133,7 @@ export default function ProductDetail({ product, related = [] }) {
       referenceImage,
       product.slug,
     );
-    openWhatsAppWithProductImages({
-      url,
-      imageSources: [referenceImage],
-    });
+    openWhatsApp(url, { copyImageSources: [referenceImage] });
   }
 
   async function handleShareProduct() {

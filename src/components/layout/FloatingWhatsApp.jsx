@@ -13,7 +13,6 @@ export default function FloatingWhatsApp() {
       render={
         <a
           href={getWhatsAppChatUrl()}
-          target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat on WhatsApp"
         />

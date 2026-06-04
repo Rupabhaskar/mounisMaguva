@@ -2,6 +2,92 @@ import { site } from "./site";
 import { formatPrice } from "./format";
 import { getWhatsAppImageReference } from "./product-images";
 
+/** International digits only, with India country code when needed */
+export function getWhatsAppPhone() {
+  let digits = site.whatsapp.replace(/\D/g, "");
+  if (digits.length === 10) {
+    digits = `91${digits}`;
+  }
+  return digits;
+}
+
+/**
+ * Opens WhatsApp Web/App reliably (api.whatsapp.com works better than wa.me on mobile browsers).
+ * @param {string} [text]
+ */
+export function getWhatsAppSendUrl(text = "") {
+  const phone = getWhatsAppPhone();
+  const params = new URLSearchParams({ phone });
+  if (text) {
+    params.set("text", text);
+  }
+  return `https://api.whatsapp.com/send?${params.toString()}`;
+}
+
+function isMobileDevice() {
+  if (typeof navigator === "undefined") return false;
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(
+    navigator.userAgent,
+  );
+}
+
+/**
+ * @param {string} url
+ * @param {string} prefix
+ */
+function prependWhatsAppMessage(url, prefix) {
+  if (!prefix) return url;
+
+  try {
+    const parsed = new URL(url);
+    const current = parsed.searchParams.get("text") || "";
+    parsed.searchParams.set("text", `${prefix}${current}`);
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
+/**
+ * Open WhatsApp immediately (must run in the same click/tap — no await before navigate).
+ * @param {string} url
+ * @param {{ copyImageSources?: Array<string | null | undefined> }} [options]
+ */
+export function openWhatsApp(url, options = {}) {
+  if (typeof window === "undefined") return;
+
+  const { copyImageSources = [] } = options;
+
+  if (copyImageSources.length) {
+    import("@/lib/whatsapp-images").then((mod) => {
+      void mod.copyProductImagesForWhatsApp(copyImageSources);
+    });
+  }
+
+  const finalUrl =
+    copyImageSources.length > 0
+      ? prependWhatsAppMessage(
+          url,
+          "📷 If product photo copied, paste it in chat before sending.\n\n",
+        )
+      : url;
+
+  if (isMobileDevice()) {
+    window.location.assign(finalUrl);
+    return;
+  }
+
+  const opened = window.open(finalUrl, "_blank", "noopener,noreferrer");
+  if (!opened) {
+    window.location.assign(finalUrl);
+  }
+}
+
+/** @deprecated Use openWhatsApp — kept for existing imports */
+export function openWhatsAppWithProductImages({ url, imageSources = [] }) {
+  openWhatsApp(url, { copyImageSources: imageSources });
+}
+
 /**
  * @param {import('./products').Product[]} items
  * @param {{ name?: string; phone?: string; note?: string }} customer
@@ -62,8 +148,7 @@ export function buildWhatsAppOrderMessage(items, customer = {}) {
  */
 export function getWhatsAppOrderUrl(items, customer = {}) {
   const message = buildWhatsAppOrderMessage(items, customer);
-  const phone = site.whatsapp.replace(/\D/g, "");
-  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  return getWhatsAppSendUrl(message);
 }
 
 export function getWhatsAppInquiryUrl(productName, sku, imageSrc, slug) {
@@ -77,11 +162,9 @@ export function getWhatsAppInquiryUrl(productName, sku, imageSrc, slug) {
     lines.push(slug ? `View product: ${productRef}` : `Photo: ${productRef}`);
   }
 
-  const phone = site.whatsapp.replace(/\D/g, "");
-  return `https://wa.me/${phone}?text=${encodeURIComponent(lines.join("\n"))}`;
+  return getWhatsAppSendUrl(lines.join("\n"));
 }
 
 export function getWhatsAppChatUrl() {
-  const phone = site.whatsapp.replace(/\D/g, "");
-  return `https://wa.me/${phone}`;
+  return getWhatsAppSendUrl();
 }
