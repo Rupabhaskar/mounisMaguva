@@ -34,7 +34,11 @@ export default function ProductCard({ product }) {
   return (
     <Card className="group/card overflow-hidden border-0 bg-transparent py-0 shadow-none">
       <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-[var(--color-surface)]">
-        <Link href={`/product/${product.slug}`} className="absolute inset-0 z-0">
+        <Link
+          href={`/product/${product.slug}`}
+          className="absolute inset-x-0 top-0 bottom-14 z-0 sm:inset-0"
+          aria-label={`View ${product.name}`}
+        >
           <Image
             src={thumbnail}
             alt={product.name}
@@ -54,14 +58,14 @@ export default function ProductCard({ product }) {
             -{discount}%
           </Badge>
         )}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 translate-y-full p-3 transition-transform duration-300 group-hover/card:translate-y-0">
+        <div className="absolute inset-x-0 bottom-0 z-20 p-3 sm:pointer-events-none sm:translate-y-full sm:transition-transform sm:duration-300 sm:group-hover/card:translate-y-0">
           <Button
             type="button"
             variant="secondary"
-            className="pointer-events-auto w-full bg-white/95 shadow-lg backdrop-blur hover:bg-[var(--color-primary)] hover:text-white"
+            className="pointer-events-auto w-full touch-manipulation bg-white/95 shadow-lg backdrop-blur hover:bg-[var(--color-primary)] hover:text-white"
             onClick={handleAddToCart}
           >
-            Buy Now
+            Add to Bag
           </Button>
         </div>
       </div>

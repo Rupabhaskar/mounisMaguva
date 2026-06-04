@@ -3,7 +3,17 @@
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Maximize2, Minus, Plus, RotateCcw, X } from "lucide-react";
+import {
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Maximize2,
+  Minus,
+  Plus,
+  RotateCcw,
+  Share2,
+  X,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import HotBadge from "@/components/product/HotBadge";
 import { Button } from "@/components/ui/button";
@@ -25,6 +35,8 @@ export default function ProductImageGallery({
   discount,
   selectedIndex,
   onSelectIndex,
+  onShare,
+  shareFeedback,
 }) {
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
@@ -196,91 +208,209 @@ export default function ProductImageGallery({
     else setZoom(2);
   }
 
+  function goToPrev() {
+    if (!mainApi) return;
+    mainApi.scrollPrev();
+  }
+
+  function goToNext() {
+    if (!mainApi) return;
+    mainApi.scrollNext();
+  }
+
+  const thumbButtonClass = (i) =>
+    cn(
+      "relative shrink-0 overflow-hidden p-0 transition-all",
+      "h-16 w-14 sm:h-[4.5rem] sm:w-[3.75rem] lg:h-[4.25rem] lg:w-[3.5rem] xl:h-[4.75rem] xl:w-16",
+      selectedIndex === i
+        ? "border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/25 shadow-sm"
+        : "border-[var(--color-border)] opacity-75 hover:opacity-100",
+    );
+
   return (
-    <section aria-label="Product images" className="space-y-3">
-      <div className="overflow-hidden rounded-2xl bg-[var(--color-surface)]" ref={mainRef}>
-        <div className="flex">
-          {images.map((src, i) => (
-            <div
-              key={src}
-              className="relative aspect-[3/4] min-w-0 shrink-0 grow-0 basis-full cursor-zoom-in"
-              onClick={() => openFullscreen(i)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") openFullscreen(i);
-              }}
-              aria-label={`View image ${i + 1} fullscreen`}
-            >
-              <Image
-                src={src}
-                alt={`${alt} — view ${i + 1}`}
-                fill
-                className="object-cover"
-                priority={i === 0}
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-              {i === selectedIndex && (isBestSeller || isNew) && (
-                <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5">
-                  {isBestSeller && <HotBadge />}
-                  {isNew && <Badge variant="gold">New</Badge>}
-                </div>
-              )}
-              {i === selectedIndex && discount && (
-                <Badge variant="sale" className="absolute top-4 right-4 z-10">
-                  -{discount}%
-                </Badge>
-              )}
-              <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 rounded-full bg-black/50 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
-                <Maximize2 className="size-3.5" />
-                Tap to zoom
+    <section aria-label="Product images" className="space-y-3 lg:space-y-0">
+      <div className="flex flex-col gap-3 lg:flex-row lg:gap-4 xl:gap-5">
+        {images.length > 1 && (
+          <div
+            className="order-2 hidden max-h-[min(72vh,640px)] shrink-0 overflow-y-auto rounded-xl bg-[var(--color-cream)]/50 p-1.5 lg:order-1 lg:flex lg:flex-col lg:gap-2 xl:max-h-[min(78vh,720px)] 2xl:max-h-[min(80vh,780px)]"
+            aria-label="Image thumbnails"
+          >
+            {images.map((img, i) => (
+              <Button
+                key={img}
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  mainApi?.scrollTo(i);
+                  syncIndex(i);
+                }}
+                className={thumbButtonClass(i)}
+              >
+                <Image src={img} alt="" fill className="object-cover" sizes="72px" />
+              </Button>
+            ))}
+          </div>
+        )}
+
+        <div className="order-1 min-w-0 flex-1 lg:order-2">
+          <div className="group/main relative overflow-hidden rounded-2xl bg-[var(--color-surface)] shadow-sm ring-1 ring-black/5">
+            {onShare && (
+              <Button
+                type="button"
+                variant="secondary"
+                size="icon-lg"
+                className="absolute top-3 right-3 z-20 touch-manipulation rounded-full bg-white/95 shadow-md ring-1 ring-black/5 backdrop-blur hover:bg-white"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onShare();
+                }}
+                aria-label={
+                  shareFeedback === "copied"
+                    ? "Product link copied"
+                    : shareFeedback === "shared"
+                      ? "Product shared"
+                      : "Share product"
+                }
+                title={
+                  shareFeedback === "copied"
+                    ? "Link copied!"
+                    : shareFeedback === "shared"
+                      ? "Shared!"
+                      : "Share product"
+                }
+              >
+                {shareFeedback === "copied" || shareFeedback === "shared" ? (
+                  <Check className="size-5 text-emerald-600" />
+                ) : (
+                  <Share2 className="size-5 text-[var(--color-text)]" />
+                )}
+              </Button>
+            )}
+            <div className="overflow-hidden" ref={mainRef}>
+              <div className="flex">
+                {images.map((src, i) => (
+                  <div
+                    key={src}
+                    className="relative aspect-[4/5] min-w-0 shrink-0 grow-0 basis-full cursor-zoom-in sm:aspect-[3/4] lg:aspect-[4/5] lg:max-h-[min(72vh,640px)] xl:max-h-[min(78vh,720px)] 2xl:max-h-[min(80vh,780px)]"
+                    onClick={() => openFullscreen(i)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") openFullscreen(i);
+                    }}
+                    aria-label={`View image ${i + 1} fullscreen`}
+                  >
+                    <Image
+                      src={src}
+                      alt={`${alt} — view ${i + 1}`}
+                      fill
+                      className="object-cover"
+                      priority={i === 0}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 48vw, 620px"
+                    />
+                    {i === selectedIndex && (isBestSeller || isNew) && (
+                      <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5">
+                        {isBestSeller && <HotBadge />}
+                        {isNew && <Badge variant="gold">New</Badge>}
+                      </div>
+                    )}
+                    {i === selectedIndex && discount && (
+                      <Badge
+                        variant="sale"
+                        className={cn(
+                          "absolute z-10",
+                          onShare ? "top-14 right-3" : "top-4 right-4",
+                        )}
+                      >
+                        -{discount}%
+                      </Badge>
+                    )}
+                    <div className="pointer-events-none absolute inset-0 z-[1] hidden bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 transition-opacity group-hover/main:opacity-100 lg:block" />
+                    <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 rounded-full bg-black/55 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm lg:opacity-0 lg:transition-opacity lg:group-hover/main:opacity-100">
+                      <Maximize2 className="size-3.5" />
+                      <span className="hidden sm:inline">Click to zoom</span>
+                      <span className="sm:hidden">Tap to zoom</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
+
+            {images.length > 1 && (
+              <>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="icon-lg"
+                  className="absolute top-1/2 left-3 z-10 hidden -translate-y-1/2 rounded-full bg-white/95 shadow-md backdrop-blur hover:bg-white lg:inline-flex"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToPrev();
+                  }}
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="size-5" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="icon-lg"
+                  className="absolute top-1/2 right-3 z-10 hidden -translate-y-1/2 rounded-full bg-white/95 shadow-md backdrop-blur hover:bg-white lg:inline-flex"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToNext();
+                  }}
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="size-5" />
+                </Button>
+                <div className="absolute bottom-3 left-3 z-10 hidden rounded-full bg-black/55 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm lg:block">
+                  {selectedIndex + 1} / {images.length}
+                </div>
+              </>
+            )}
+          </div>
+
+          {images.length > 1 && (
+            <div className="mt-3 flex items-center justify-between text-xs text-[var(--color-muted)] lg:mt-4">
+              <span className="lg:hidden">
+                Swipe to browse · {selectedIndex + 1} / {images.length}
+              </span>
+              <span className="hidden lg:inline">Use arrows or thumbnails to browse photos</span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-8 text-[var(--color-primary)]"
+                onClick={() => openFullscreen(selectedIndex)}
+              >
+                <Maximize2 className="size-3.5" />
+                Fullscreen
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
       {images.length > 1 && (
-        <>
-          <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>
-              Swipe to browse · {selectedIndex + 1} / {images.length}
-            </span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-8 text-[var(--color-primary)]"
-              onClick={() => openFullscreen(selectedIndex)}
-            >
-              <Maximize2 className="size-3.5" />
-              Fullscreen
-            </Button>
+        <div className="overflow-hidden rounded-xl bg-[var(--color-cream)]/40 p-1 lg:hidden" ref={thumbsRef}>
+          <div className="flex gap-2">
+            {images.map((img, i) => (
+              <Button
+                key={img}
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  mainApi?.scrollTo(i);
+                  syncIndex(i);
+                }}
+                className={thumbButtonClass(i)}
+              >
+                <Image src={img} alt="" fill className="object-cover" sizes="64px" />
+              </Button>
+            ))}
           </div>
-          <div className="overflow-hidden" ref={thumbsRef}>
-            <div className="flex gap-2">
-              {images.map((img, i) => (
-                <Button
-                  key={img}
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    mainApi?.scrollTo(i);
-                    syncIndex(i);
-                  }}
-                  className={cn(
-                    "relative h-20 w-16 shrink-0 overflow-hidden p-0",
-                    selectedIndex === i
-                      ? "border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/30"
-                      : "opacity-70",
-                  )}
-                >
-                  <Image src={img} alt="" fill className="object-cover" sizes="64px" />
-                </Button>
-              ))}
-            </div>
-          </div>
-        </>
+        </div>
       )}
 
       {fullscreenOpen && (

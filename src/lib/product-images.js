@@ -1,5 +1,6 @@
 import { MAX_IMAGES_PER_COLOR } from "@/lib/constants";
 import { maguvaImage } from "@/lib/images";
+import { site } from "@/lib/site";
 
 /**
  * Images linked to product colors.
@@ -54,6 +55,108 @@ export function normalizeProductImageSrc(src, fallback = FALLBACK_THUMBNAIL) {
   }
 
   return encodeLocalImagePath(path);
+}
+
+/** Full HTTPS URL for next/image and absolute resolution */
+export function resolveAbsoluteProductImageUrl(src, origin) {
+  const normalized = normalizeProductImageSrc(src, null);
+  if (!normalized) return "";
+
+  if (/^https?:\/\//i.test(normalized)) {
+    return normalized;
+  }
+
+  const base =
+    origin ||
+    (typeof window !== "undefined" ? window.location.origin : site.url);
+
+  try {
+    return new URL(normalized, base).toString();
+  } catch {
+    return "";
+  }
+}
+
+const CLOUDINARY_UPLOAD = "/image/upload/";
+const CLOUDINARY_DELIVERY_TRANSFORMS = "f_auto,q_auto:good,w_1200,c_limit";
+
+/** @param {string} url */
+export function isCloudinaryUrl(url) {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    return host === "res.cloudinary.com" || host.endsWith(".cloudinary.com");
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Optimized Cloudinary delivery URL (not the raw upload/source link).
+ * @param {string} url
+ */
+export function toCloudinaryDeliveryUrl(url) {
+  if (!url || !isCloudinaryUrl(url)) return url;
+
+  const markerIndex = url.indexOf(CLOUDINARY_UPLOAD);
+  if (markerIndex === -1) return url;
+
+  const before = url.slice(0, markerIndex + CLOUDINARY_UPLOAD.length);
+  const after = url.slice(markerIndex + CLOUDINARY_UPLOAD.length);
+
+  if (
+    after.startsWith(`${CLOUDINARY_DELIVERY_TRANSFORMS}/`) ||
+    after.includes("f_auto")
+  ) {
+    return url;
+  }
+
+  return `${before}${CLOUDINARY_DELIVERY_TRANSFORMS}/${after}`;
+}
+
+/** @param {string} slug @param {string} [origin] */
+export function getProductPageUrl(slug, origin) {
+  const base =
+    origin ||
+    (typeof window !== "undefined" ? window.location.origin : site.url);
+  try {
+    return new URL(`/product/${slug}`, base).toString();
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * What to put in WhatsApp message text — product page link, never raw Cloudinary source.
+ * @param {string | null | undefined} imageSrc
+ * @param {{ slug?: string; origin?: string }} [options]
+ */
+export function getWhatsAppImageReference(imageSrc, options = {}) {
+  const { slug, origin } = options;
+
+  if (slug) {
+    return getProductPageUrl(slug, origin);
+  }
+
+  const absolute = resolveAbsoluteProductImageUrl(imageSrc, origin);
+  if (!absolute) return "";
+
+  if (isCloudinaryUrl(absolute)) {
+    return toCloudinaryDeliveryUrl(absolute);
+  }
+
+  return absolute;
+}
+
+/** URL to fetch when copying an image for WhatsApp paste */
+export function resolveWhatsAppImageFetchUrl(imageSrc, origin) {
+  const absolute = resolveAbsoluteProductImageUrl(imageSrc, origin);
+  if (!absolute) return "";
+
+  if (isCloudinaryUrl(absolute)) {
+    return toCloudinaryDeliveryUrl(absolute);
+  }
+
+  return absolute;
 }
 
 function normalizeImageList(list) {

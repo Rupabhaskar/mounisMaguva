@@ -12,7 +12,7 @@ import {
 
 const STORAGE_KEY = "maguva-cart";
 
-/** @typedef {{ productId: string; slug: string; sku: string; name: string; price: number; image: string; quantity: number; size: string }} CartItem */
+/** @typedef {{ productId: string; slug: string; sku: string; name: string; price: number; image: string; quantity: number; size: string; color?: string; imageIndex?: number }} CartItem */
 
 /** @type {React.Context<{
  *   items: CartItem[];

@@ -92,28 +92,34 @@ export const productInfoCards = [
     description: "On all orders across India",
     icon: "truck",
     className:
-      "border-emerald-200 bg-emerald-50 text-emerald-900 [&_svg]:text-emerald-600",
+      "border-emerald-200/70 bg-gradient-to-br from-emerald-50 to-white text-emerald-950",
+    iconClassName: "text-emerald-600",
   },
   {
     id: "delivery",
     title: "Delivery",
     description: "Dispatched in 3–5 business days",
     icon: "clock",
-    className: "border-sky-200 bg-sky-50 text-sky-900 [&_svg]:text-sky-600",
+    className: "border-sky-200/70 bg-gradient-to-br from-sky-50 to-white text-sky-950",
+    iconClassName: "text-sky-600",
   },
   {
     id: "color",
     title: "Color note",
     description: "Slight shade variation possible in natural light",
     icon: "alert",
-    className: "border-amber-200 bg-amber-50 text-amber-900 [&_svg]:text-amber-600",
+    className:
+      "border-amber-200/70 bg-gradient-to-br from-amber-50 to-white text-amber-950",
+    iconClassName: "text-amber-600",
   },
   {
     id: "returns",
     title: "Return policy",
     description: "Easy exchanges within 7 days",
     icon: "return",
-    className: "border-violet-200 bg-violet-50 text-violet-900 [&_svg]:text-violet-600",
+    className:
+      "border-violet-200/70 bg-gradient-to-br from-violet-50 to-white text-violet-950",
+    iconClassName: "text-violet-600",
   },
   {
     id: "quality",
@@ -121,7 +127,8 @@ export const productInfoCards = [
     description: "Handpicked fabrics and careful quality checks on every piece",
     icon: "quality",
     className:
-      "border-rose-200 bg-rose-50 text-rose-900 [&_svg]:text-[var(--color-primary)]",
+      "border-[var(--color-primary)]/20 bg-gradient-to-br from-[var(--color-cream)] to-white text-[var(--color-text)]",
+    iconClassName: "text-[var(--color-primary)]",
   },
   {
     id: "satisfaction",
@@ -129,6 +136,7 @@ export const productInfoCards = [
     description: "We stand behind every order — reach us anytime on WhatsApp",
     icon: "satisfaction",
     className:
-      "border-teal-200 bg-teal-50 text-teal-900 [&_svg]:text-teal-600",
+      "border-teal-200/70 bg-gradient-to-br from-teal-50 to-white text-teal-950",
+    iconClassName: "text-teal-600",
   },
 ];

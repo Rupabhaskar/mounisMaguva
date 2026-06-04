@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/format";
 import { getWhatsAppOrderUrl } from "@/lib/whatsapp";
+import { openWhatsAppWithProductImages } from "@/lib/whatsapp-images";
 import { IconMinus, IconPlus, IconWhatsApp } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,16 +39,22 @@ export default function CartDrawer() {
 
   const whatsappItems = items.map((i) => ({
     name: i.name,
+    slug: i.slug,
     sku: i.sku,
     price: i.price,
     quantity: i.quantity,
     size: i.size,
+    image: i.image,
   }));
 
-  const checkoutUrl =
-    items.length > 0
-      ? getWhatsAppOrderUrl(whatsappItems, { name, phone, note })
-      : "#";
+  function handleWhatsAppOrder() {
+    if (!items.length) return;
+
+    openWhatsAppWithProductImages({
+      url: getWhatsAppOrderUrl(whatsappItems, { name, phone, note }),
+      imageSources: items.map((item) => item.image),
+    });
+  }
 
   return (
     <Sheet
@@ -154,7 +161,8 @@ export default function CartDrawer() {
             <SheetFooter className="border-t border-[var(--color-border)] bg-[var(--color-surface)]/50 px-5 py-4">
               <div className="w-full space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  Share your details — we&apos;ll confirm availability on WhatsApp
+                  Share your details — we&apos;ll confirm availability on WhatsApp. Your product
+                  photo will be copied so you can paste it in the chat.
                 </p>
                 <div className="space-y-2">
                   <Label htmlFor="cart-name" className="sr-only">
@@ -201,10 +209,9 @@ export default function CartDrawer() {
                 <Button
                   variant="whatsapp"
                   size="pill"
+                  type="button"
                   className="w-full"
-                  render={
-                    <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" />
-                  }
+                  onClick={handleWhatsAppOrder}
                 >
                   <IconWhatsApp className="size-5" />
                   Order on WhatsApp

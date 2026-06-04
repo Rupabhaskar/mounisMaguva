@@ -24,16 +24,16 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-[var(--color-surface)] backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-[var(--color-border)] bg-[var(--color-surface)] supports-[backdrop-filter]:lg:backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between gap-4 sm:h-18">
-          <Link href="/" className="group flex shrink-0 items-center gap-2.5 sm:gap-3">
+        <div className="flex h-14 items-center justify-between gap-2 sm:h-16 sm:gap-4">
+          <Link href="/" className="group flex min-w-0 flex-1 items-center gap-2 sm:max-w-[70%] sm:flex-initial sm:gap-2.5 lg:max-w-none">
             <Image
               src="/Mounis Logo.png"
               alt={site.name}
-              width={90}
-              height= {90}
-              className="h-16 w-16 rounded-full object-contain sm:h-18 sm:w-18"
+              width={72}
+              height={72}
+              className="h-11 w-11 shrink-0 rounded-full object-contain sm:h-14 sm:w-14"
               priority
             />
             <div className="flex flex-col leading-none">
@@ -62,11 +62,11 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="relative z-10 flex shrink-0 items-center gap-1 sm:gap-2">
             <Button
               variant="outline"
-              size="icon"
-              className="hidden rounded-full sm:flex"
+              size="icon-lg"
+              className="hidden rounded-full sm:inline-flex"
               render={
                 <a
                   href={site.instagram}
@@ -82,9 +82,12 @@ export default function Header() {
             <Button
               type="button"
               variant="brand"
-              size="icon"
-              className="relative rounded-full"
-              onClick={openCart}
+              size="icon-lg"
+              className="relative touch-manipulation rounded-full"
+              onClick={() => {
+                setMobileOpen(false);
+                openCart();
+              }}
               aria-label={`Open cart, ${itemCount} items`}
             >
               <ShoppingBag className="size-4" />
@@ -101,8 +104,8 @@ export default function Header() {
             <Button
               type="button"
               variant="outline"
-              size="icon"
-              className="rounded-full lg:hidden"
+              size="icon-lg"
+              className="touch-manipulation rounded-full lg:hidden"
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
             >

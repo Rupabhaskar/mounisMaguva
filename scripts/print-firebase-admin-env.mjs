@@ -22,3 +22,4 @@ try {
   console.error(`Could not read ${absolutePath}:`, error.message);
   process.exit(1);
 }
+   

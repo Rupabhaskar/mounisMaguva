@@ -1,5 +1,6 @@
 import { site } from "./site";
 import { formatPrice } from "./format";
+import { getWhatsAppImageReference } from "./product-images";
 
 /**
  * @param {import('./products').Product[]} items
@@ -24,8 +25,16 @@ export function buildWhatsAppOrderMessage(items, customer = {}) {
       `   Qty: ${item.quantity}${item.size ? ` | Size: ${item.size}` : ""}`,
       `   Price: ${formatPrice(item.price)} each`,
       `   Subtotal: ${formatPrice(lineTotal)}`,
-      "",
     );
+
+    const productRef = getWhatsAppImageReference(item.image, { slug: item.slug });
+    if (productRef) {
+      lines.push(
+        item.slug ? `   View product: ${productRef}` : `   Photo: ${productRef}`,
+      );
+    }
+
+    lines.push("");
   });
 
   lines.push(`*Estimated total: ${formatPrice(total)}*`);
@@ -57,10 +66,19 @@ export function getWhatsAppOrderUrl(items, customer = {}) {
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
 
-export function getWhatsAppInquiryUrl(productName, sku) {
-  const message = `Hi ${site.name}! I'm interested in *${productName}* (${sku}). Is it available? Please share more details.`;
+export function getWhatsAppInquiryUrl(productName, sku, imageSrc, slug) {
+  const lines = [
+    `Hi ${site.name}! I'm interested in *${productName}* (${sku}). Is it available? Please share more details.`,
+  ];
+
+  const productRef = getWhatsAppImageReference(imageSrc, { slug });
+  if (productRef) {
+    lines.push("");
+    lines.push(slug ? `View product: ${productRef}` : `Photo: ${productRef}`);
+  }
+
   const phone = site.whatsapp.replace(/\D/g, "");
-  return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${phone}?text=${encodeURIComponent(lines.join("\n"))}`;
 }
 
 export function getWhatsAppChatUrl() {
