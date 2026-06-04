@@ -1,9 +1,11 @@
 import ProductDetail from "@/components/product/ProductDetail";
+import { getProductThumbnail } from "@/lib/product-images";
 import {
   getAllProducts,
   getProductBySlug,
   getRelatedProducts,
 } from "@/lib/products";
+import { site } from "@/lib/site";
 import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
@@ -15,9 +17,35 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
   if (!product) return { title: "Product" };
+
+  const description =
+    product.description ||
+    `Shop ${product.name} at ${site.name}. SKU ${product.sku}.`;
+  const image = getProductThumbnail(product);
+  const path = `/product/${slug}`;
+
   return {
     title: product.name,
-    description: product.description,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      title: product.name,
+      description,
+      url: path,
+      type: "website",
+      images: [
+        {
+          url: image,
+          alt: product.name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.name,
+      description,
+      images: [image],
+    },
   };
 }
 
