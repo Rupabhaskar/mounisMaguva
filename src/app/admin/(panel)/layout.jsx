@@ -6,7 +6,9 @@ const navItems = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/orders", label: "Orders" },
   { href: "/admin/products", label: "Products" },
+  { href: "/admin/hero", label: "Hero" },
   { href: "/admin/offers", label: "Offers" },
+  { href: "/admin/coupons", label: "Coupons" },
   { href: "/admin/images", label: "Images" },
 ];
 
@@ -25,7 +27,6 @@ export default async function AdminPanelLayout({ children }) {
         <p className="mt-1 truncate text-sm text-[var(--color-text)]">
           {admin.name || admin.email}
         </p>
-        <p className="truncate text-[10px] text-[var(--color-muted)]">{admin.uid}</p>
         <nav className="mt-4 flex flex-col gap-1">
           {navItems.map((item) => (
             <Link

@@ -1,6 +1,9 @@
 "use client";
 
 import {
+  calculateCouponDiscount,
+} from "@/lib/coupon-math";
+import {
   createContext,
   startTransition,
   useCallback,
@@ -11,37 +14,53 @@ import {
 } from "react";
 
 const STORAGE_KEY = "maguva-cart";
+const COUPON_KEY = "maguva-cart-coupon";
 
 /** @typedef {{ productId: string; slug: string; sku: string; name: string; price: number; image: string; quantity: number; size: string; color?: string; imageIndex?: number }} CartItem */
+
+/** @typedef {{
+ *   code: string;
+ *   label?: string;
+ *   discountType: string;
+ *   discountValue: number;
+ *   minOrderAmount?: number | null;
+ * }} AppliedCoupon */
 
 /** @type {React.Context<{
  *   items: CartItem[];
  *   isOpen: boolean;
  *   itemCount: number;
  *   subtotal: number;
+ *   discount: number;
+ *   total: number;
+ *   appliedCoupon: AppliedCoupon | null;
  *   openCart: () => void;
  *   closeCart: () => void;
  *   toggleCart: () => void;
  *   addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
  *   removeItem: (productId: string, size: string) => void;
  *   updateQuantity: (productId: string, size: string, quantity: number) => void;
+ *   setAppliedCoupon: (coupon: AppliedCoupon | null) => void;
  *   clearCart: () => void;
  * } | null>} */
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState(/** @type {CartItem[]} */ ([]));
+  const [appliedCoupon, setAppliedCouponState] = useState(
+    /** @type {AppliedCoupon | null} */ (null),
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        startTransition(() => {
-          setItems(JSON.parse(stored));
-        });
-      }
+      const storedCoupon = localStorage.getItem(COUPON_KEY);
+      startTransition(() => {
+        if (stored) setItems(JSON.parse(stored));
+        if (storedCoupon) setAppliedCouponState(JSON.parse(storedCoupon));
+      });
     } catch {
       /* ignore */
     }
@@ -54,6 +73,19 @@ export function CartProvider({ children }) {
     if (!hydrated) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (appliedCoupon) {
+      localStorage.setItem(COUPON_KEY, JSON.stringify(appliedCoupon));
+    } else {
+      localStorage.removeItem(COUPON_KEY);
+    }
+  }, [appliedCoupon, hydrated]);
+
+  const setAppliedCoupon = useCallback((coupon) => {
+    setAppliedCouponState(coupon);
+  }, []);
 
   const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);
@@ -94,7 +126,10 @@ export function CartProvider({ children }) {
     );
   }, []);
 
-  const clearCart = useCallback(() => setItems([]), []);
+  const clearCart = useCallback(() => {
+    setItems([]);
+    setAppliedCouponState(null);
+  }, []);
 
   const itemCount = useMemo(
     () => items.reduce((sum, i) => sum + i.quantity, 0),
@@ -106,18 +141,36 @@ export function CartProvider({ children }) {
     [items],
   );
 
+  const discount = useMemo(() => {
+    if (!appliedCoupon || subtotal <= 0) return 0;
+    const minOrder = appliedCoupon.minOrderAmount
+      ? Number(appliedCoupon.minOrderAmount)
+      : 0;
+    if (minOrder > 0 && subtotal < minOrder) return 0;
+    return calculateCouponDiscount(subtotal, appliedCoupon);
+  }, [appliedCoupon, subtotal]);
+
+  const total = useMemo(
+    () => Math.max(0, subtotal - discount),
+    [subtotal, discount],
+  );
+
   const value = useMemo(
     () => ({
       items,
       isOpen,
       itemCount,
       subtotal,
+      discount,
+      total,
+      appliedCoupon,
       openCart,
       closeCart,
       toggleCart,
       addItem,
       removeItem,
       updateQuantity,
+      setAppliedCoupon,
       clearCart,
     }),
     [
@@ -125,12 +178,16 @@ export function CartProvider({ children }) {
       isOpen,
       itemCount,
       subtotal,
+      discount,
+      total,
+      appliedCoupon,
       openCart,
       closeCart,
       toggleCart,
       addItem,
       removeItem,
       updateQuantity,
+      setAppliedCoupon,
       clearCart,
     ],
   );

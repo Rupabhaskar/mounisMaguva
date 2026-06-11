@@ -1,8 +1,14 @@
 import { slugify } from "@/lib/utils";
 import { getAllProductImages, normalizeColorImagesPayload } from "@/lib/product-images";
+import {
+  normalizeOrderStatus,
+  ORDER_STATUSES,
+  generateTrackingId,
+} from "@/lib/order-tracking";
 
-export const ORDER_STATUSES = ["new", "confirmed", "packed", "shipped", "delivered", "cancelled"];
+export { ORDER_STATUSES };
 export const BANNER_PLACEMENTS = ["home", "collections"];
+export const COUPON_DISCOUNT_TYPES = ["percent", "fixed"];
 
 function toNumber(value, fallback = 0) {
   const n = Number(value);
@@ -103,15 +109,40 @@ export function normalizeProductInput(payload = {}) {
 }
 
 export function normalizeOrderInput(payload = {}) {
-  const status = String(payload.status || "new").toLowerCase();
+  const status = normalizeOrderStatus(payload.status);
+  const existingHistory = Array.isArray(payload.statusHistory)
+    ? payload.statusHistory
+    : [];
+
   return {
     customerName: String(payload.customerName || "").trim(),
     customerPhone: String(payload.customerPhone || "").trim(),
+    customerEmail: String(payload.customerEmail || "").trim(),
     note: String(payload.note || "").trim(),
-    status: ORDER_STATUSES.includes(status) ? status : "new",
+    status,
+    trackingId: String(payload.trackingId || "").trim() || generateTrackingId(),
     items: Array.isArray(payload.items) ? payload.items : [],
     whatsappMessagePreview: String(payload.whatsappMessagePreview || "").trim(),
+    statusHistory: existingHistory,
+    couponCode: String(payload.couponCode || "").trim(),
+    discountAmount: payload.discountAmount ? Number(payload.discountAmount) : null,
+    total: payload.total ? Number(payload.total) : null,
   };
+}
+
+export function appendStatusHistory(order, nextStatus) {
+  const status = normalizeOrderStatus(nextStatus);
+  const history = Array.isArray(order?.statusHistory) ? [...order.statusHistory] : [];
+  const last = history[history.length - 1];
+
+  if (!last || last.status !== status) {
+    history.push({
+      status,
+      at: new Date().toISOString(),
+    });
+  }
+
+  return history;
 }
 
 export function normalizeBannerInput(payload = {}) {
@@ -140,5 +171,44 @@ export function normalizeMediaOverrideInput(payload = {}) {
   return {
     alias: String(payload.alias || "").trim(),
     url: String(payload.url || "").trim(),
+  };
+}
+
+export function normalizeCouponCode(value) {
+  return String(value || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9_-]/g, "");
+}
+
+export function normalizeCouponInput(payload = {}) {
+  const discountType = String(payload.discountType || "percent").toLowerCase();
+  const expiresAt = String(payload.expiresAt || "").trim();
+
+  return {
+    code: normalizeCouponCode(payload.code),
+    label: String(payload.label || "").trim(),
+    discountType: COUPON_DISCOUNT_TYPES.includes(discountType)
+      ? discountType
+      : "percent",
+    discountValue: toNumber(payload.discountValue),
+    minOrderAmount: payload.minOrderAmount ? toNumber(payload.minOrderAmount) : null,
+    maxUses: payload.maxUses ? toNumber(payload.maxUses) : null,
+    usedCount: toNumber(payload.usedCount, 0),
+    expiresAt: expiresAt || null,
+    active: payload.active !== false,
+  };
+}
+
+export function normalizeHeroSlideInput(payload = {}) {
+  return {
+    title: String(payload.title || "").trim(),
+    description: String(payload.description || "").trim(),
+    ctaLabel: String(payload.ctaLabel || "Shop collection").trim(),
+    ctaHref: String(payload.ctaHref || "/shop").trim(),
+    image: String(payload.image || "").trim(),
+    alt: String(payload.alt || "").trim(),
+    sortOrder: toNumber(payload.sortOrder),
+    active: payload.active !== false,
   };
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { COLLECTIONS, dbNow, listCollection, setDocument } from "@/lib/firestore";
-import { normalizeOrderInput } from "@/lib/admin-models";
+import { appendStatusHistory, normalizeOrderInput } from "@/lib/admin-models";
 import { requireAdminApi, jsonError } from "@/lib/admin-api";
 
 export async function GET(request) {
@@ -25,9 +25,12 @@ export async function POST(request) {
     const body = await request.json();
     const data = normalizeOrderInput(body);
     const id = body?.id || randomUUID();
+    const statusHistory = appendStatusHistory(null, data.status);
+
     await setDocument(COLLECTIONS.orders, id, {
       ...data,
       id,
+      statusHistory,
       createdAt: dbNow(),
       updatedAt: dbNow(),
     });

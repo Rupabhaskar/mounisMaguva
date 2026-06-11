@@ -114,7 +114,7 @@ export default function Hero({ slides: slidesProp }) {
             >
               <div className="flex aspect-[3/4] max-h-[min(58vh,440px)] sm:aspect-[4/5] sm:max-h-[min(62vh,480px)] lg:aspect-[16/11] lg:max-h-[540px] xl:aspect-[4/5] xl:max-h-none">
                 {slides.map((s, i) => (
-                  <div key={s.title} className="relative min-h-0 min-w-0 flex-[0_0_100%]">
+                  <div key={`${s.title}-${i}`} className="relative min-h-0 min-w-0 flex-[0_0_100%]">
                     <div
                       className={cn(
                         "relative h-full w-full",

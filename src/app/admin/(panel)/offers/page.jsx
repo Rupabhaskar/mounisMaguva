@@ -81,7 +81,7 @@ export default function AdminOffersPage() {
             <option value="collections">Collections</option>
           </select>
           <input className="input-field" type="number" placeholder="Sort order" value={bannerForm.sortOrder} onChange={(e) => setBannerForm((v) => ({ ...v, sortOrder: Number(e.target.value || 0) }))} />
-          <button className="btn-primary md:col-span-2" type="submit">
+          <button className="admin-btn-primary md:col-span-2 md:w-fit" type="submit">
             Save banner
           </button>
         </form>
@@ -108,12 +108,20 @@ export default function AdminOffersPage() {
           {products.map((product) => (
             <div key={product.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[var(--color-border)] p-3">
               <p className="text-sm">{product.name}</p>
-              <div className="flex gap-2">
-                <button type="button" className="btn-outline text-xs" onClick={() => toggleFeatured(product, "isNew")}>
-                  {product.isNew ? "Unmark New" : "Mark New"}
+              <div className="flex flex-wrap gap-1.5">
+                <button
+                  type="button"
+                  className={`admin-btn-toggle ${product.isNew ? "admin-btn-toggle-active" : ""}`}
+                  onClick={() => toggleFeatured(product, "isNew")}
+                >
+                  {product.isNew ? "New ✓" : "Mark New"}
                 </button>
-                <button type="button" className="btn-outline text-xs" onClick={() => toggleFeatured(product, "isBestSeller")}>
-                  {product.isBestSeller ? "Unmark Best Seller" : "Mark Best Seller"}
+                <button
+                  type="button"
+                  className={`admin-btn-toggle ${product.isBestSeller ? "admin-btn-toggle-active" : ""}`}
+                  onClick={() => toggleFeatured(product, "isBestSeller")}
+                >
+                  {product.isBestSeller ? "Best Seller ✓" : "Mark Best Seller"}
                 </button>
               </div>
             </div>

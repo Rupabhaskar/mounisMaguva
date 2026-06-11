@@ -210,6 +210,15 @@ export function getProductThumbnail(product) {
   return normalizeProductImageSrc(FALLBACK_THUMBNAIL);
 }
 
+/** Primary + next image for listing hover swap */
+export function getProductCardImages(product) {
+  const images = getAllProductImages(product);
+  const primary = images[0] || getProductThumbnail(product);
+  const hover =
+    images.length > 1 && images[1] !== primary ? images[1] : null;
+  return { primary, hover };
+}
+
 /** All unique images across colors (for SEO / fallback) */
 export function getAllProductImages(product) {
   const map = getColorImagesMap(product);

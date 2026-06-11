@@ -123,7 +123,19 @@ export function buildWhatsAppOrderMessage(items, customer = {}) {
     lines.push("");
   });
 
-  lines.push(`*Estimated total: ${formatPrice(total)}*`);
+  const discountAmount = Number(customer.discountAmount) || 0;
+  const grandTotal = Math.max(0, total - discountAmount);
+
+  if (discountAmount > 0 && customer.couponCode) {
+    lines.push(`Subtotal: ${formatPrice(total)}`);
+    lines.push(
+      `Coupon *${customer.couponCode}*: -${formatPrice(discountAmount)}`,
+    );
+    lines.push(`*Estimated total: ${formatPrice(grandTotal)}*`);
+  } else {
+    lines.push(`*Estimated total: ${formatPrice(total)}*`);
+  }
+
   lines.push("");
   lines.push("Please confirm availability and payment details.");
 
@@ -133,6 +145,10 @@ export function buildWhatsAppOrderMessage(items, customer = {}) {
   }
   if (customer.phone) {
     lines.push(`Phone: ${customer.phone}`);
+  }
+  if (customer.couponCode) {
+    lines.push("");
+    lines.push(`Coupon code: ${customer.couponCode}`);
   }
   if (customer.note) {
     lines.push("");

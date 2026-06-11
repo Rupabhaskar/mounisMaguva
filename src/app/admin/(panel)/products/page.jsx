@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { AdminTableActions } from "@/components/admin/OrderManageUI";
 import { formatPrice } from "@/lib/format";
 import { getProductThumbnail } from "@/lib/product-images";
 
@@ -62,7 +63,7 @@ export default function AdminProductsPage() {
           </p>
         </div>
         {canAdd ? (
-          <Link href="/admin/products/new" className="btn-primary text-sm">
+          <Link href="/admin/products/new" className="admin-btn-primary">
             Add product
           </Link>
         ) : (
@@ -163,21 +164,11 @@ export default function AdminProductsPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="flex justify-end gap-2">
-                          <Link
-                            href={`/admin/products/${product.id}`}
-                            className="btn-outline text-xs"
-                          >
-                            Edit
-                          </Link>
-                          <button
-                            type="button"
-                            className="btn-outline text-xs text-red-600 hover:border-red-300 hover:text-red-700"
-                            onClick={() => deleteProduct(product.id, product.name)}
-                          >
-                            Delete
-                          </button>
-                        </div>
+                        <AdminTableActions
+                          manageHref={`/admin/products/${product.id}`}
+                          manageLabel="Edit"
+                          onDelete={() => deleteProduct(product.id, product.name)}
+                        />
                       </td>
                     </tr>
                   );

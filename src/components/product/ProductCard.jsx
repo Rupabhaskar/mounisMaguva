@@ -2,19 +2,26 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useMemo } from "react";
 import { useCart } from "@/context/CartContext";
 import { formatDiscount, formatPrice } from "@/lib/format";
-import { getProductThumbnail } from "@/lib/product-images";
+import { getProductCardImages, getProductThumbnail } from "@/lib/product-images";
 import { Badge } from "@/components/ui/badge";
 import HotBadge from "@/components/product/HotBadge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
+import { cn } from "@/lib/utils";
+
 export default function ProductCard({ product }) {
   const { addItem } = useCart();
   const discount = formatDiscount(product.originalPrice, product.price);
   const defaultSize = product.sizes[0];
-  const thumbnail = getProductThumbnail(product);
+  const { primary, hover } = useMemo(
+    () => getProductCardImages(product),
+    [product],
+  );
+  const thumbnail = primary || getProductThumbnail(product);
 
   function handleAddToCart(e) {
     e.preventDefault();
@@ -40,12 +47,26 @@ export default function ProductCard({ product }) {
           aria-label={`View ${product.name}`}
         >
           <Image
-            src={thumbnail}
+            src={primary}
             alt={product.name}
             fill
-            className="object-cover transition-transform duration-500 group-hover/card:scale-105"
+            className={cn(
+              "object-cover transition-all duration-500",
+              hover
+                ? "opacity-100 group-hover/card:opacity-0 group-hover/card:scale-105"
+                : "group-hover/card:scale-105",
+            )}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
+          {hover && (
+            <Image
+              src={hover}
+              alt={`${product.name} — alternate view`}
+              fill
+              className="object-cover opacity-0 transition-all duration-500 group-hover/card:scale-105 group-hover/card:opacity-100"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            />
+          )}
         </Link>
         <div className="pointer-events-none absolute top-3 left-3 z-[1] flex flex-col gap-1.5">
           {product.isBestSeller && <HotBadge />}

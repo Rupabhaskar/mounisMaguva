@@ -25,7 +25,7 @@ export default async function AdminProductCreatePage() {
             You can only have {MAX_PRODUCTS} products. Delete an existing product before adding a
             new one.
           </p>
-          <Link href="/admin/products" className="btn-primary mt-4 inline-flex text-sm">
+          <Link href="/admin/products" className="admin-btn-primary mt-4 inline-flex">
             Back to products
           </Link>
         </div>

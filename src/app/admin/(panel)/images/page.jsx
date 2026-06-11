@@ -84,7 +84,7 @@ export default function AdminImagesPage() {
       <form onSubmit={uploadFile} className="rounded-xl border border-[var(--color-border)] bg-white p-4">
         <p className="text-sm font-medium">Upload image</p>
         <input name="file" className="mt-3 block w-full text-sm" type="file" accept="image/*" required />
-        <button className="btn-primary mt-3" type="submit" disabled={uploading}>
+        <button className="admin-btn-primary mt-3" type="submit" disabled={uploading}>
           {uploading ? "Uploading..." : "Upload"}
         </button>
       </form>
@@ -101,7 +101,7 @@ export default function AdminImagesPage() {
           </select>
           <input className="input-field" placeholder="Image URL" value={url} onChange={(e) => setUrl(e.target.value)} required />
         </div>
-        <button className="btn-primary mt-3" type="submit">
+        <button className="admin-btn-primary mt-3" type="submit">
           Save override
         </button>
       </form>

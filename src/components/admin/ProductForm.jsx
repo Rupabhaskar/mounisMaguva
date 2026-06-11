@@ -414,10 +414,10 @@ export default function ProductForm({ mode = "create", product }) {
       {formError ? <p className="text-sm text-red-600">{formError}</p> : null}
 
       <div className="flex flex-wrap items-center gap-3 border-t border-[var(--color-border)] pt-4">
-        <button className="btn-primary" type="submit" disabled={submitting}>
+        <button className="admin-btn-primary" type="submit" disabled={submitting}>
           {submitting ? "Saving..." : "Save product"}
         </button>
-        <Link href="/admin/products" className="btn-outline">
+        <Link href="/admin/products" className="admin-btn-secondary">
           Cancel
         </Link>
       </div>

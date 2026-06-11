@@ -106,6 +106,7 @@ export const navLinks = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
   { href: "/collections", label: "Collections" },
+  { href: "/track", label: "Track Order" },
   // { href: "/instagram", label: "Instagram" },
   { href: "/about", label: "Our Story" },
   { href: "/contact", label: "Contact" },

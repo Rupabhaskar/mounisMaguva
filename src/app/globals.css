@@ -118,6 +118,42 @@ body {
     @apply inline-flex items-center justify-center px-8 py-3.5 border-2 border-[var(--color-primary)] text-[var(--color-primary)] font-semibold rounded-full hover:bg-[var(--color-primary)] hover:text-white transition-colors text-sm sm:text-base;
   }
 
+  .admin-action-link {
+    @apply inline-flex items-center px-1.5 py-0.5 text-xs font-medium text-[var(--color-primary)] hover:underline underline-offset-2;
+  }
+
+  .admin-action-muted {
+    @apply inline-flex items-center px-1.5 py-0.5 text-xs font-medium text-[var(--color-muted)] hover:text-[var(--color-text)];
+  }
+
+  .admin-action-danger {
+    @apply inline-flex items-center px-1.5 py-0.5 text-xs font-medium text-[var(--color-muted)] hover:text-red-600;
+  }
+
+  .admin-btn-sm {
+    @apply inline-flex items-center rounded border border-[var(--color-border)] bg-white px-2.5 py-1 text-xs font-medium text-[var(--color-muted)] transition-colors hover:border-[var(--color-primary)]/30 hover:text-[var(--color-primary)];
+  }
+
+  .admin-btn-sm-danger {
+    @apply inline-flex items-center rounded border border-[var(--color-border)] bg-white px-2.5 py-1 text-xs font-medium text-[var(--color-muted)] transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-600;
+  }
+
+  .admin-btn-primary {
+    @apply inline-flex items-center justify-center rounded-md bg-[var(--color-primary)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[var(--color-primary-dark)] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .admin-btn-secondary {
+    @apply inline-flex items-center justify-center rounded-md border border-[var(--color-border)] bg-white px-4 py-2 text-sm font-medium text-[var(--color-text)] transition-colors hover:border-[var(--color-primary)]/30 hover:text-[var(--color-primary)] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .admin-btn-toggle {
+    @apply inline-flex items-center rounded-md border border-[var(--color-border)] bg-white px-2.5 py-1 text-xs font-medium text-[var(--color-muted)] transition-colors hover:border-[var(--color-primary)]/30 hover:text-[var(--color-primary)];
+  }
+
+  .admin-btn-toggle-active {
+    @apply border-[var(--color-primary)]/25 bg-[var(--color-cream)] text-[var(--color-primary)];
+  }
+
   .btn-whatsapp {
     @apply inline-flex items-center justify-center px-8 py-3.5 bg-[#25D366] text-white font-semibold rounded-full hover:bg-[#1da851] transition-colors;
   }

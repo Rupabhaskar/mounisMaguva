@@ -10,6 +10,8 @@ export const COLLECTIONS = {
   banners: "banners",
   media: "media",
   mediaOverrides: "mediaOverrides",
+  heroSlides: "heroSlides",
+  coupons: "coupons",
 };
 
 export function dbNow() {

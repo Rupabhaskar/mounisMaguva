@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { normalizeHeroSlideInput } from "@/lib/admin-models";
+import { requireAdminApi, jsonError } from "@/lib/admin-api";
 import {
   COLLECTIONS,
   dbNow,
@@ -6,17 +8,17 @@ import {
   getDocument,
   setDocument,
 } from "@/lib/firestore";
-import { appendStatusHistory, normalizeOrderInput } from "@/lib/admin-models";
-import { requireAdminApi, jsonError } from "@/lib/admin-api";
 
 export async function GET(request, { params }) {
   const { error } = await requireAdminApi(request);
   if (error) return error;
   try {
     const { id } = await params;
-    const order = await getDocument(COLLECTIONS.orders, id);
-    if (!order) return NextResponse.json({ error: "Not found" }, { status: 404 });
-    return NextResponse.json({ order });
+    const slide = await getDocument(COLLECTIONS.heroSlides, id);
+    if (!slide) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    return NextResponse.json({ slide });
   } catch (routeError) {
     return jsonError(routeError);
   }
@@ -27,15 +29,18 @@ export async function PUT(request, { params }) {
   if (error) return error;
   try {
     const { id } = await params;
-    const existing = await getDocument(COLLECTIONS.orders, id);
     const body = await request.json();
-    const data = normalizeOrderInput({ ...existing, ...body, id });
-    const statusHistory = appendStatusHistory(existing, data.status);
+    const data = normalizeHeroSlideInput(body);
+    if (!data.title || !data.image) {
+      return NextResponse.json(
+        { error: "Title and image are required." },
+        { status: 400 },
+      );
+    }
 
-    await setDocument(COLLECTIONS.orders, id, {
+    await setDocument(COLLECTIONS.heroSlides, id, {
       ...data,
       id,
-      statusHistory,
       updatedAt: dbNow(),
     });
     return NextResponse.json({ ok: true });
@@ -49,7 +54,7 @@ export async function DELETE(request, { params }) {
   if (error) return error;
   try {
     const { id } = await params;
-    await deleteDocument(COLLECTIONS.orders, id);
+    await deleteDocument(COLLECTIONS.heroSlides, id);
     return NextResponse.json({ ok: true });
   } catch (routeError) {
     return jsonError(routeError);

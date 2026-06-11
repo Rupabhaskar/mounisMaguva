@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/format";
 import { copyProductImagesForWhatsApp } from "@/lib/whatsapp-images";
-import { getWhatsAppOrderUrl } from "@/lib/whatsapp";
+import { getWhatsAppOrderUrl, buildWhatsAppOrderMessage } from "@/lib/whatsapp";
 import { IconMinus, IconPlus, IconWhatsApp } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,12 +30,26 @@ export default function CartDrawer() {
     removeItem,
     updateQuantity,
     subtotal,
+    discount,
+    total,
+    appliedCoupon,
+    setAppliedCoupon,
     clearCart,
   } = useCart();
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [note, setNote] = useState("");
+  const [couponDraft, setCouponDraft] = useState("");
+  const [couponError, setCouponError] = useState("");
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
+
+  const couponInput = couponDraft || appliedCoupon?.code || "";
+
+  const couponBelowMinimum =
+    appliedCoupon?.minOrderAmount &&
+    subtotal < Number(appliedCoupon.minOrderAmount);
 
   const whatsappItems = items.map((i) => ({
     name: i.name,
@@ -49,12 +63,78 @@ export default function CartDrawer() {
 
   const checkoutUrl =
     items.length > 0
-      ? getWhatsAppOrderUrl(whatsappItems, { name, phone, note })
+      ? getWhatsAppOrderUrl(whatsappItems, {
+          name,
+          phone,
+          note,
+          couponCode: discount > 0 ? appliedCoupon?.code : undefined,
+          discountAmount: discount > 0 ? discount : undefined,
+        })
       : "#";
+
+  async function applyCoupon(event) {
+    event.preventDefault();
+    if (!couponInput.trim()) return;
+
+    setApplyingCoupon(true);
+    setCouponError("");
+
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: couponInput, subtotal }),
+      });
+      const data = await res.json();
+
+      if (!data.valid) {
+        setCouponError(data.error || "Could not apply coupon.");
+        setAppliedCoupon(null);
+        return;
+      }
+
+      setAppliedCoupon(data.coupon);
+      setCouponError("");
+    } catch {
+      setCouponError("Could not validate coupon. Try again.");
+    } finally {
+      setApplyingCoupon(false);
+    }
+  }
+
+  function removeCoupon() {
+    setAppliedCoupon(null);
+    setCouponDraft("");
+    setCouponError("");
+  }
 
   function handleWhatsAppOrderClick() {
     if (!items.length) return;
     void copyProductImagesForWhatsApp(items.map((item) => item.image));
+
+    const messagePreview = buildWhatsAppOrderMessage(whatsappItems, {
+      name,
+      phone,
+      note,
+      couponCode: discount > 0 ? appliedCoupon?.code : undefined,
+      discountAmount: discount > 0 ? discount : undefined,
+    });
+
+    void fetch("/api/orders/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customerName: name,
+        customerPhone: phone,
+        customerEmail: email,
+        note,
+        items: whatsappItems,
+        couponCode: discount > 0 ? appliedCoupon?.code : "",
+        discountAmount: discount > 0 ? discount : null,
+        total,
+        whatsappMessagePreview: messagePreview,
+      }),
+    });
   }
 
   return (
@@ -161,23 +241,63 @@ export default function CartDrawer() {
 
             <SheetFooter className="border-t border-[var(--color-border)] bg-[var(--color-surface)]/50 px-5 py-4">
               <div className="w-full space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Share your details — we&apos;ll confirm availability on WhatsApp. Your product
-                  photo will be copied so you can paste it in the chat.
-                </p>
-                <div className="space-y-2">
-                  <Label htmlFor="cart-name" className="sr-only">
-                    Your name
+                <form onSubmit={applyCoupon} className="space-y-2">
+                  <Label htmlFor="cart-coupon" className="text-sm font-medium">
+                    Coupon code
                   </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="cart-coupon"
+                      placeholder="Enter code"
+                      value={couponInput}
+                      onChange={(e) =>
+                        setCouponDraft(e.target.value.toUpperCase())
+                      }
+                      className="uppercase"
+                    />
+                    <Button
+                      type="submit"
+                      variant="outline"
+                      className="shrink-0"
+                      disabled={applyingCoupon}
+                    >
+                      {applyingCoupon ? "…" : "Apply"}
+                    </Button>
+                  </div>
+                  {couponError && (
+                    <p className="text-xs text-red-600">{couponError}</p>
+                  )}
+                  {appliedCoupon && !couponError && (
+                    <div className="flex items-center justify-between rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-800">
+                      <span>
+                        <span className="font-semibold">{appliedCoupon.code}</span>{" "}
+                        applied
+                        {discount > 0 ? ` (−${formatPrice(discount)})` : ""}
+                      </span>
+                      <button
+                        type="button"
+                        className="font-medium underline"
+                        onClick={removeCoupon}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                  {couponBelowMinimum && (
+                    <p className="text-xs text-amber-700">
+                      Add more items to use {appliedCoupon?.code} (min{" "}
+                      {formatPrice(Number(appliedCoupon?.minOrderAmount))}).
+                    </p>
+                  )}
+                </form>
+
+                <div className="space-y-2">
                   <Input
                     id="cart-name"
                     placeholder="Your name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
-                  <Label htmlFor="cart-phone" className="sr-only">
-                    Phone number
-                  </Label>
                   <Input
                     id="cart-phone"
                     type="tel"
@@ -185,9 +305,13 @@ export default function CartDrawer() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                   />
-                  <Label htmlFor="cart-note" className="sr-only">
-                    Special requests
-                  </Label>
+                  <Input
+                    id="cart-email"
+                    type="email"
+                    placeholder="Email (for order tracking)"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                   <Textarea
                     id="cart-note"
                     placeholder="Special requests (size, color, delivery...)"
@@ -200,11 +324,23 @@ export default function CartDrawer() {
 
                 <Separator />
 
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">Subtotal</span>
-                  <span className="font-[family-name:var(--font-display)] text-xl text-[var(--color-primary)]">
-                    {formatPrice(subtotal)}
-                  </span>
+                <div className="space-y-1.5 text-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span>{formatPrice(subtotal)}</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex items-center justify-between text-emerald-700">
+                      <span>Discount ({appliedCoupon?.code})</span>
+                      <span>−{formatPrice(discount)}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-2">
+                    <span className="font-medium">Total</span>
+                    <span className="font-[family-name:var(--font-display)] text-xl text-[var(--color-primary)]">
+                      {formatPrice(total)}
+                    </span>
+                  </div>
                 </div>
 
                 <Button
@@ -239,4 +375,3 @@ export default function CartDrawer() {
     </Sheet>
   );
 }
-
