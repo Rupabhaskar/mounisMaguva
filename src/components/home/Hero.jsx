@@ -2,69 +2,33 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import useEmblaCarousel from "embla-carousel-react";
-import { useCallback, useEffect, useState } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { maguvaImage } from "@/lib/images";
-import { site } from "@/lib/site";
-import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { heroImages } from "@/lib/hero-images";
 import { cn } from "@/lib/utils";
-
-const fallbackSlides = [
-  {
-    title: "Timeless elegance for every celebration",
-    description:
-      "Handpicked sarees, 3 piece sets and kurtis — curated for weddings, festivals and everyday grace.",
-    cta: { label: "Shop collection", href: "/shop" },
-    image: maguvaImage(1),
-    alt: "Ethnic saree collection",
-  },
-  {
-    title: "3 piece sets that turn every head",
-    description:
-      "Co-ord kurta sets with dupatta — made for your most unforgettable day.",
-    cta: { label: "Shop 3 piece sets", href: "/shop/three-piece-sets" },
-    image: maguvaImage(6),
-    alt: "3 piece set",
-  },
-  {
-    title: "Festive looks for every occasion",
-    description:
-      "Light drapes and bold colours — ready for sangeet, puja and party nights.",
-    cta: { label: "Shop sarees", href: "/shop/sarees" },
-    image: maguvaImage(4),
-    alt: "Festive saree",
-  },
-  {
-    title: "Everyday kurtis, effortlessly beautiful",
-    description:
-      "Soft cotton and rayon — comfort you can wear from morning to evening.",
-    cta: { label: "Shop kurtis", href: "/shop/kurtis" },
-    image: maguvaImage(12),
-    alt: "Kurti collection",
-  },
-];
 
 const AUTOPLAY_MS = 5000;
 
 function SlideDots({ count, index, onSelect, className }) {
   return (
-    <div className={cn("flex items-center justify-center gap-2", className)}>
+    <div className={cn("flex items-center justify-center gap-1.5 sm:gap-2", className)}>
       {Array.from({ length: count }, (_, i) => (
         <button
           key={i}
           type="button"
           aria-label={`Go to slide ${i + 1}`}
           aria-current={i === index ? "true" : undefined}
-          onClick={() => onSelect(i)}
-          className="flex min-h-11 min-w-11 items-center justify-center p-2"
+          onClick={(event) => {
+            event.stopPropagation();
+            onSelect(i);
+          }}
+          className="flex min-h-10 min-w-10 items-center justify-center p-2"
         >
           <span
             className={cn(
-              "block h-2 rounded-full transition-all duration-300",
-              i === index
-                ? "w-7 bg-[var(--color-primary)]"
-                : "w-2 bg-[var(--color-primary)]/30",
+              "block size-2 rounded-full transition-all duration-300 sm:size-2.5",
+              i === index ? "bg-white" : "bg-white/45",
             )}
           />
         </button>
@@ -73,150 +37,160 @@ function SlideDots({ count, index, onSelect, className }) {
   );
 }
 
-export default function Hero({ slides: slidesProp }) {
+export default function Hero() {
+  const pathname = usePathname();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: true,
     duration: 25,
     align: "start",
+    slidesToScroll: 1,
+    containScroll: "trimSnaps",
+    watchResize: true,
   });
   const [index, setIndex] = useState(0);
+  const autoplayRef = useRef(null);
+
+  const slides = heroImages;
+
+  const clearAutoplay = useCallback(() => {
+    if (autoplayRef.current) {
+      clearInterval(autoplayRef.current);
+      autoplayRef.current = null;
+    }
+  }, []);
+
+  const startAutoplay = useCallback(() => {
+    if (!emblaApi) return;
+    clearAutoplay();
+    autoplayRef.current = setInterval(() => {
+      emblaApi.scrollNext();
+    }, AUTOPLAY_MS);
+  }, [emblaApi, clearAutoplay]);
+
+  const restartCarousel = useCallback(() => {
+    if (!emblaApi) return;
+    emblaApi.reInit();
+    setIndex(emblaApi.selectedScrollSnap());
+    startAutoplay();
+  }, [emblaApi, startAutoplay]);
 
   useEffect(() => {
     if (!emblaApi) return;
+    emblaApi.reInit();
+  }, [emblaApi, slides.length]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
     const syncIndex = () => setIndex(emblaApi.selectedScrollSnap());
-    emblaApi.on("select", syncIndex);
-    emblaApi.on("reInit", syncIndex);
-    return () => {
-      emblaApi.off("select", syncIndex);
-      emblaApi.off("reInit", syncIndex);
+    const onSelect = () => {
+      syncIndex();
+      startAutoplay();
     };
-  }, [emblaApi]);
+
+    syncIndex();
+    startAutoplay();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+
+    return () => {
+      clearAutoplay();
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+    };
+  }, [emblaApi, clearAutoplay, startAutoplay]);
+
+  useEffect(() => {
+    if (!emblaApi || pathname !== "/") return;
+
+    const frame = requestAnimationFrame(() => {
+      restartCarousel();
+    });
+
+    return () => cancelAnimationFrame(frame);
+  }, [emblaApi, pathname, restartCarousel]);
 
   useEffect(() => {
     if (!emblaApi) return;
-    const timer = setInterval(() => emblaApi.scrollNext(), AUTOPLAY_MS);
-    return () => clearInterval(timer);
-  }, [emblaApi]);
 
-  const scrollTo = useCallback((i) => emblaApi?.scrollTo(i), [emblaApi]);
-  const slides = slidesProp?.length ? slidesProp : fallbackSlides;
-  const slide = slides[index];
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        restartCarousel();
+      } else {
+        clearAutoplay();
+      }
+    };
+
+    const handlePageShow = (event) => {
+      if (event.persisted) {
+        restartCarousel();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("pageshow", handlePageShow);
+    };
+  }, [emblaApi, restartCarousel, clearAutoplay]);
+
+  const scrollTo = useCallback(
+    (i) => {
+      emblaApi?.scrollTo(i);
+    },
+    [emblaApi],
+  );
+
+  const handleSlideClick = useCallback(
+    (event) => {
+      if (!emblaApi?.clickAllowed()) {
+        event.preventDefault();
+      }
+    },
+    [emblaApi],
+  );
 
   return (
-    <section className="bg-[var(--color-surface)]">
-      <div className="mx-auto max-w-7xl lg:px-8">
-        <div className="flex flex-col lg:grid lg:min-h-[min(74vh,640px)] lg:grid-cols-2 lg:items-center lg:gap-10 lg:px-6 lg:py-12 xl:min-h-[min(85vh,720px)] xl:gap-16 xl:py-16">
-          {/* Carousel — full bleed on mobile */}
-          <div className="group relative order-1 w-full lg:order-2">
-            <div
-              ref={emblaRef}
-              className="overflow-hidden shadow-md ring-1 ring-black/5 max-lg:rounded-none lg:rounded-2xl lg:shadow-lg"
-            >
-              <div className="flex aspect-[3/4] max-h-[min(58vh,440px)] sm:aspect-[4/5] sm:max-h-[min(62vh,480px)] lg:aspect-[16/11] lg:max-h-[540px] xl:aspect-[4/5] xl:max-h-none">
-                {slides.map((s, i) => (
-                  <div key={`${s.title}-${i}`} className="relative min-h-0 min-w-0 flex-[0_0_100%]">
-                    <div
-                      className={cn(
-                        "relative h-full w-full",
-                        i === index && "animate-ken-burns",
-                      )}
-                    >
-                      <Image
-                        src={s.image}
-                        alt={s.alt}
-                        fill
-                        className="object-cover object-top sm:object-center"
-                        priority={i === 0}
-                        sizes="(max-width: 1023px) 100vw, min(50vw, 640px)"
-                      />
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/5" />
-                  </div>
-                ))}
-              </div>
-
-              {/* Mobile: slide counter */}
-              <div className="absolute right-4 top-4 rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur lg:hidden">
-                {index + 1} / {slides.length}
-              </div>
-
-              {/* Mobile: dots on image */}
-              <div className="absolute inset-x-0 bottom-3 lg:hidden">
-                <SlideDots
-                  count={slides.length}
-                  index={index}
-                  onSelect={scrollTo}
-                  className="rounded-full bg-black/25 px-2 py-0.5 backdrop-blur-sm [&_button]:min-h-9 [&_button]:min-w-9"
+    <section className="bg-[var(--color-cream)]">
+      <div className="relative w-full">
+        <div
+          ref={emblaRef}
+          className="relative h-[clamp(240px,52vw,900px)] w-full overflow-hidden sm:h-[clamp(280px,48vw,900px)] lg:h-[clamp(320px,44vw,920px)]"
+        >
+          <div className="flex h-full w-full touch-pan-y">
+            {slides.map((slide, i) => (
+              <Link
+                key={slide.src}
+                href={slide.href || "/shop"}
+                onClick={handleSlideClick}
+                className="relative block h-full min-w-0 shrink-0 grow-0 basis-full cursor-pointer"
+                aria-label={`Shop now — ${slide.alt}`}
+              >
+                <Image
+                  src={slide.src}
+                  alt={slide.alt}
+                  fill
+                  priority={i === 0}
+                  quality={95}
+                  sizes="100vw"
+                  className="object-cover object-center"
+                  style={{
+                    objectPosition: slide.objectPosition || "center center",
+                  }}
                 />
-              </div>
-            </div>
-
-            {/* Arrows — always visible on touch devices */}
-            <button
-              type="button"
-              onClick={() => emblaApi?.scrollPrev()}
-              aria-label="Previous slide"
-              className="absolute left-3 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-[var(--color-primary)] shadow-md active:scale-95 max-lg:opacity-100 lg:opacity-0 lg:transition-opacity lg:group-hover:opacity-100"
-            >
-              <ChevronLeft className="size-5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => emblaApi?.scrollNext()}
-              aria-label="Next slide"
-              className="absolute right-3 top-1/2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-[var(--color-primary)] shadow-md active:scale-95 max-lg:opacity-100 lg:opacity-0 lg:transition-opacity lg:group-hover:opacity-100"
-            >
-              <ChevronRight className="size-5" />
-            </button>
-
-            <p className="mt-2 text-center text-[11px] text-[var(--color-muted)] lg:hidden">
-              Swipe or tap arrows to browse
-            </p>
+              </Link>
+            ))}
           </div>
+        </div>
 
-          {/* Copy */}
-          <div className="order-2 px-4 pb-10 pt-6 text-center sm:px-6 lg:order-1 lg:px-0 lg:pb-0 lg:pt-0 lg:text-left">
-            <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)] sm:text-xs sm:tracking-[0.28em]">
-              {site.tagline}
-            </p>
-
-            <div key={index} className="animate-hero-rise">
-              <h1 className="font-[family-name:var(--font-display)] text-[1.65rem] leading-[1.2] text-[var(--color-primary)] sm:text-4xl sm:leading-tight lg:text-[2.6rem] lg:leading-[1.12] xl:text-[3.25rem] xl:leading-tight">
-                {slide.title}
-              </h1>
-              <p className="mx-auto mt-4 max-w-sm text-sm leading-relaxed text-[var(--color-muted)] sm:mt-5 sm:max-w-md sm:text-base lg:mx-0 lg:max-w-lg">
-                {slide.description}
-              </p>
-            </div>
-
-            <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:justify-center lg:mt-7 lg:justify-start">
-              <Button
-                variant="brand"
-                size="block"
-                className="rounded-full sm:w-auto sm:min-w-[200px] sm:px-8"
-                render={<Link href={slide.cta.href} />}
-              >
-                {slide.cta.label}
-                <ArrowRight className="size-4" />
-              </Button>
-              <Button
-                variant="brandOutline"
-                size="block"
-                className="rounded-full bg-white sm:w-auto sm:min-w-[200px] sm:px-8"
-                render={<Link href="/collections" />}
-              >
-                View collections
-              </Button>
-            </div>
-
-            {/* Desktop dots */}
-            <SlideDots
-              count={slides.length}
-              index={index}
-              onSelect={scrollTo}
-              className="mt-10 hidden justify-start lg:flex"
-            />
-          </div>
+        <div className="absolute inset-x-0 bottom-4 z-10 sm:bottom-5">
+          <SlideDots
+            count={slides.length}
+            index={index}
+            onSelect={scrollTo}
+          />
         </div>
       </div>
     </section>

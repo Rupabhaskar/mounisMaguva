@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import ProductImage from "@/components/product/ProductImage";
 import useEmblaCarousel from "embla-carousel-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -17,6 +17,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import HotBadge from "@/components/product/HotBadge";
 import { Button } from "@/components/ui/button";
+import { getDisplayImageSrc } from "@/lib/image-cache";
 import { cn } from "@/lib/utils";
 
 const MIN_ZOOM = 1;
@@ -246,7 +247,7 @@ export default function ProductImageGallery({
                 }}
                 className={thumbButtonClass(i)}
               >
-                <Image src={img} alt="" fill className="object-cover" sizes="72px" />
+                <ProductImage src={img} alt="" fill className="object-cover" sizes="72px" />
               </Button>
             ))}
           </div>
@@ -300,7 +301,7 @@ export default function ProductImageGallery({
                     }}
                     aria-label={`View image ${i + 1} fullscreen`}
                   >
-                    <Image
+                    <ProductImage
                       src={src}
                       alt={`${alt} — view ${i + 1}`}
                       fill
@@ -406,7 +407,7 @@ export default function ProductImageGallery({
                 }}
                 className={thumbButtonClass(i)}
               >
-                <Image src={img} alt="" fill className="object-cover" sizes="64px" />
+                <ProductImage src={img} alt="" fill className="object-cover" sizes="64px" />
               </Button>
             ))}
           </div>
@@ -501,7 +502,7 @@ export default function ProductImageGallery({
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={src}
+                      src={getDisplayImageSrc(src)}
                       alt={`${alt} — fullscreen ${i + 1}`}
                       className="max-h-[85vh] max-w-full object-contain select-none"
                       draggable={false}

@@ -1,4 +1,5 @@
-import ProductGrid from "@/components/product/ProductGrid";
+import ProductCacheWarmer from "@/components/shop/ProductCacheWarmer";
+import ShopCatalog from "@/components/shop/ShopCatalog";
 import { categories } from "@/lib/site";
 import { getProductsByCategory } from "@/lib/products";
 import Link from "next/link";
@@ -62,7 +63,8 @@ export default async function CategoryShopPage({ params }) {
         ))}
       </div>
 
-      <ProductGrid
+      <ProductCacheWarmer products={items} />
+      <ShopCatalog
         products={items}
         emptyMessage={`No ${cat.name.toLowerCase()} available right now. Check back soon!`}
       />

@@ -162,6 +162,58 @@ body {
     @apply w-full px-4 py-2.5 text-sm rounded-lg border border-[var(--color-border)] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)];
   }
 
+  .price-range-thumb {
+    @apply h-4 appearance-none bg-transparent pointer-events-none outline-none;
+    accent-color: transparent;
+  }
+
+  .price-range-thumb:focus {
+    outline: none;
+  }
+
+  .price-range-thumb:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
+  }
+
+  .price-range-thumb:focus-visible::-moz-range-thumb {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 30%, transparent);
+  }
+
+  .price-range-thumb::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    @apply pointer-events-auto size-4 cursor-pointer appearance-none rounded-full border-2 border-white bg-[var(--color-primary)] shadow-md;
+  }
+
+  .price-range-thumb::-moz-range-thumb {
+    @apply pointer-events-auto size-4 cursor-pointer rounded-full border-2 border-white bg-[var(--color-primary)] shadow-md;
+  }
+
+  .price-range-thumb::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    @apply h-1 border-0 bg-transparent;
+  }
+
+  .price-range-thumb::-moz-range-track {
+    @apply h-1 border-0 bg-transparent;
+  }
+
+  .price-range-thumb::-moz-range-progress {
+    background: transparent;
+  }
+
+  .price-range-thumb::-ms-track {
+    @apply h-1 border-0 bg-transparent text-transparent;
+  }
+
+  .price-range-thumb::-ms-fill-lower,
+  .price-range-thumb::-ms-fill-upper {
+    background: transparent;
+  }
+
+  .price-range-thumb::-ms-thumb {
+    @apply size-4 cursor-pointer rounded-full border-2 border-white bg-[var(--color-primary)];
+  }
+
   .badge-new {
     @apply px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[var(--color-accent-cream)] text-[var(--color-primary)] rounded;
   }

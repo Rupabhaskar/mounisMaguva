@@ -189,10 +189,7 @@ export default function TrackOrderForm() {
         onSubmit={handleSubmit}
         className="rounded-2xl border border-[var(--color-border)] bg-white p-5 shadow-sm sm:p-6"
       >
-        <p className="text-sm text-[var(--color-muted)]">
-          Enter the mobile number or email you used when ordering on WhatsApp.
-          Only active orders are shown — delivered orders are hidden.
-        </p>
+      
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="track-phone">Mobile number</Label>

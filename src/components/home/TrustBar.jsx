@@ -21,16 +21,21 @@ const items = [
 export default function TrustBar() {
   return (
     <section className="border-y border-[var(--color-border)] bg-[var(--color-surface)]">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+      <div className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
+        <div className="grid grid-cols-3 divide-x divide-[var(--color-border)]/70 sm:divide-x-0 sm:gap-8">
           {items.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="flex items-center gap-4 justify-center sm:justify-start">
-              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] shrink-0">
-                <Icon />
+            <div
+              key={title}
+              className="flex flex-col items-center px-1.5 text-center first:pl-0 last:pr-0 sm:flex-row sm:items-center sm:gap-4 sm:px-0 sm:text-left"
+            >
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[var(--color-primary)]/10 text-[var(--color-primary)] sm:size-12">
+                <Icon className="size-5" />
               </div>
-              <div>
-                <p className="font-semibold text-sm">{title}</p>
-                <p className="text-xs text-[var(--color-muted)] mt-0.5">{text}</p>
+              <div className="mt-2 min-w-0 sm:mt-0">
+                <p className="text-[11px] font-semibold leading-tight sm:text-sm">{title}</p>
+                <p className="mt-1 hidden text-xs leading-snug text-[var(--color-muted)] sm:block">
+                  {text}
+                </p>
               </div>
             </div>
           ))}

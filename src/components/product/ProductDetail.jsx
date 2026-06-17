@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import ProductImage from "@/components/product/ProductImage";
 import Link from "next/link";
 import { startTransition, useEffect, useMemo, useState } from "react";
 import {
@@ -272,7 +272,7 @@ export default function ProductDetail({ product, related = [] }) {
               <Label className="mb-2.5 block text-sm font-semibold text-[var(--color-text)]">
                 Choose color
               </Label>
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-2 xl:grid-cols-3 2xl:gap-3.5">
+              <div className="flex flex-wrap gap-2 sm:gap-2.5">
                 {colorSamples.map((opt) => {
                   const isSelected = selectedColorId === opt.id;
                   return (
@@ -282,7 +282,7 @@ export default function ProductDetail({ product, related = [] }) {
                       disabled={!opt.available}
                       onClick={() => setSelectedColorId(opt.id)}
                       className={cn(
-                        "flex h-full flex-col overflow-hidden rounded-xl border-2 bg-white text-left transition-all duration-200",
+                        "flex w-[5.75rem] shrink-0 flex-col overflow-hidden rounded-lg border-2 bg-white text-left transition-all duration-200 sm:w-[6.25rem] md:w-[6.75rem] lg:w-[7rem]",
                         isSelected
                           ? "border-[var(--color-primary)] shadow-md ring-2 ring-[var(--color-primary)]/15"
                           : "border-[var(--color-border)] hover:-translate-y-0.5 hover:border-[var(--color-primary)]/40 hover:shadow-sm",
@@ -291,13 +291,13 @@ export default function ProductDetail({ product, related = [] }) {
                       aria-pressed={isSelected}
                       aria-label={`Color ${opt.label}`}
                     >
-                      <div className="relative aspect-[5/6] w-full bg-[var(--color-surface)] lg:aspect-[4/5]">
-                        <Image
+                      <div className="relative aspect-[3/4] h-20 w-full bg-[var(--color-surface)] sm:h-[5.5rem] md:h-24 lg:h-[6.5rem]">
+                        <ProductImage
                           src={opt.sampleImage}
                           alt={`${product.name} — ${opt.label}`}
                           fill
                           className="object-cover"
-                          sizes="(max-width: 1024px) 45vw, (max-width: 1280px) 20vw, 140px"
+                          sizes="(max-width: 639px) 88px, (max-width: 1023px) 100px, 112px"
                         />
                         {!opt.available && (
                           <span className="absolute inset-0 flex items-center justify-center bg-black/40 text-xs font-semibold text-white">
@@ -305,12 +305,12 @@ export default function ProductDetail({ product, related = [] }) {
                           </span>
                         )}
                       </div>
-                      <div className="flex min-h-[2.75rem] flex-1 items-center gap-2 border-t border-[var(--color-border)] px-2.5 py-2">
+                      <div className="flex items-center gap-1.5 border-t border-[var(--color-border)] px-1.5 py-1.5 sm:px-2 sm:py-1.5">
                         <span
-                          className="size-3.5 shrink-0 rounded-full border border-black/10"
+                          className="size-3 shrink-0 rounded-full border border-black/10"
                           style={{ backgroundColor: opt.hex }}
                         />
-                        <span className="line-clamp-2 flex-1 text-xs font-medium capitalize leading-snug text-[var(--color-text)]">
+                        <span className="line-clamp-2 flex-1 text-[10px] font-medium capitalize leading-snug text-[var(--color-text)]">
                           {opt.label}
                         </span>
                       </div>

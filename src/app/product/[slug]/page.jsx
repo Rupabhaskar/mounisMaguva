@@ -1,3 +1,4 @@
+import ProductCacheWarmer from "@/components/shop/ProductCacheWarmer";
 import ProductDetail from "@/components/product/ProductDetail";
 import { getProductThumbnail } from "@/lib/product-images";
 import {
@@ -56,5 +57,10 @@ export default async function ProductPage({ params }) {
 
   const related = await getRelatedProducts(product);
 
-  return <ProductDetail product={product} related={related} />;
+  return (
+    <>
+      <ProductCacheWarmer products={[product, ...related]} />
+      <ProductDetail product={product} related={related} />
+    </>
+  );
 }

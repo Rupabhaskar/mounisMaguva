@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import ProductImage from "@/components/product/ProductImage";
 import Link from "next/link";
 import { useMemo } from "react";
 import { useCart } from "@/context/CartContext";
@@ -46,7 +46,7 @@ export default function ProductCard({ product }) {
           className="absolute inset-x-0 top-0 bottom-14 z-0 sm:inset-0"
           aria-label={`View ${product.name}`}
         >
-          <Image
+          <ProductImage
             src={primary}
             alt={product.name}
             fill
@@ -59,7 +59,7 @@ export default function ProductCard({ product }) {
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
           {hover && (
-            <Image
+            <ProductImage
               src={hover}
               alt={`${product.name} — alternate view`}
               fill

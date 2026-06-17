@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import ProductImage from "@/components/product/ProductImage";
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
@@ -173,7 +173,7 @@ export default function CartDrawer() {
                   className="flex gap-3 pb-4"
                 >
                   <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface)]">
-                    <Image
+                    <ProductImage
                       src={item.image}
                       alt={item.name}
                       fill
