@@ -2,6 +2,7 @@
 
 import ProductImage from "@/components/product/ProductImage";
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/format";
@@ -11,16 +12,36 @@ import { IconMinus, IconPlus, IconWhatsApp } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
+
+function CartSection({ title, summary, defaultOpen = false, children }) {
+  return (
+    <details
+      className="group rounded-xl border border-[var(--color-border)] bg-white"
+      open={defaultOpen}
+    >
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden">
+        <div className="min-w-0 text-left">
+          <p className="text-sm font-semibold text-[var(--color-text)]">{title}</p>
+          {summary && (
+            <p className="mt-0.5 truncate text-xs text-[var(--color-muted)]">{summary}</p>
+          )}
+        </div>
+        <ChevronDown className="size-4 shrink-0 text-[var(--color-muted)] transition-transform group-open:rotate-180" />
+      </summary>
+      <div className="space-y-3 border-t border-[var(--color-border)] px-4 py-3">
+        {children}
+      </div>
+    </details>
+  );
+}
 
 export default function CartDrawer() {
   const {
@@ -32,6 +53,7 @@ export default function CartDrawer() {
     subtotal,
     discount,
     total,
+    itemCount,
     appliedCoupon,
     setAppliedCoupon,
     clearCart,
@@ -50,6 +72,11 @@ export default function CartDrawer() {
   const couponBelowMinimum =
     appliedCoupon?.minOrderAmount &&
     subtotal < Number(appliedCoupon.minOrderAmount);
+
+  const contactSummary =
+    name || phone || email
+      ? [name, phone, email].filter(Boolean).join(" · ")
+      : "Add name, phone & email for tracking";
 
   const whatsappItems = items.map((i) => ({
     name: i.name,
@@ -146,12 +173,30 @@ export default function CartDrawer() {
     >
       <SheetContent
         side="right"
-        className="flex w-full flex-col gap-0 border-[var(--color-border)] bg-[var(--color-cream)] p-0 sm:max-w-md"
+        className="flex h-full max-h-dvh w-full flex-col gap-0 overflow-hidden border-[var(--color-border)] bg-[var(--color-cream)] p-0 sm:max-w-md"
       >
-        <SheetHeader className="border-b border-[var(--color-border)] px-5 py-4 text-left">
-          <SheetTitle className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
-            Your Bag
-          </SheetTitle>
+        <SheetHeader className="shrink-0 border-b border-[var(--color-border)] bg-white px-5 py-4 text-left">
+          <div className="flex items-start justify-between gap-3 pr-8">
+            <div>
+              <SheetTitle className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-primary)]">
+                Your Bag
+              </SheetTitle>
+              {items.length > 0 && (
+                <p className="mt-1 text-xs text-[var(--color-muted)]">
+                  {itemCount} {itemCount === 1 ? "item" : "items"}
+                </p>
+              )}
+            </div>
+            {items.length > 0 && (
+              <Link
+                href="/shop"
+                onClick={closeCart}
+                className="shrink-0 text-xs font-semibold text-[var(--color-primary)] hover:underline"
+              >
+                + Add more
+              </Link>
+            )}
+          </div>
           <SheetDescription className="sr-only">
             Review items and order on WhatsApp
           </SheetDescription>
@@ -159,92 +204,120 @@ export default function CartDrawer() {
 
         {items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-            <p className="mb-6 text-muted-foreground">Your bag is empty</p>
+            <p className="mb-6 text-[var(--color-muted)]">Your bag is empty</p>
             <Button variant="brand" size="pill" render={<Link href="/shop" onClick={closeCart} />}>
               Explore Collection
             </Button>
           </div>
         ) : (
           <>
-            <ul className="flex-1 space-y-4 overflow-y-auto px-5 py-4">
-              {items.map((item) => (
-                <li
-                  key={`${item.productId}-${item.size}`}
-                  className="flex gap-3 pb-4"
-                >
-                  <div className="relative h-24 w-20 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface)]">
-                    <ProductImage
-                      src={item.image}
-                      alt={item.name}
-                      fill
-                      className="object-cover"
-                      sizes="80px"
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="line-clamp-2 text-sm font-medium">{item.name}</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">
-                      {item.sku} · {item.size}
-                    </p>
-                    <p className="mt-1 text-sm font-semibold text-[var(--color-primary)]">
-                      {formatPrice(item.price)}
-                    </p>
-                    <div className="mt-2 flex items-center justify-between">
-                      <div className="flex items-center rounded-full border border-border">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon-sm"
-                          className="rounded-l-full"
-                          onClick={() =>
-                            updateQuantity(
-                              item.productId,
-                              item.size,
-                              item.quantity - 1,
-                            )
-                          }
-                          aria-label="Decrease quantity"
-                        >
-                          <IconMinus />
-                        </Button>
-                        <span className="w-8 text-center text-sm">{item.quantity}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon-sm"
-                          className="rounded-r-full"
-                          onClick={() =>
-                            updateQuantity(
-                              item.productId,
-                              item.size,
-                              item.quantity + 1,
-                            )
-                          }
-                          aria-label="Increase quantity"
-                        >
-                          <IconPlus />
-                        </Button>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="link"
-                        className="h-auto p-0 text-xs text-muted-foreground"
-                        onClick={() => removeItem(item.productId, item.size)}
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 py-4">
+              <ul className="space-y-3">
+                {items.map((item) => {
+                  const lineTotal = item.price * item.quantity;
 
-            <SheetFooter className="border-t border-[var(--color-border)] bg-[var(--color-surface)]/50 px-5 py-4">
-              <div className="w-full space-y-4">
+                  return (
+                    <li
+                      key={`${item.productId}-${item.size}`}
+                      className="rounded-xl border border-[var(--color-border)] bg-white p-3"
+                    >
+                      <div className="flex gap-3">
+                        <Link
+                          href={`/product/${item.slug}`}
+                          onClick={closeCart}
+                          className="relative h-[4.5rem] w-16 shrink-0 overflow-hidden rounded-lg bg-[var(--color-surface)]"
+                        >
+                          <ProductImage
+                            src={item.image}
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                            sizes="64px"
+                          />
+                        </Link>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <Link
+                                href={`/product/${item.slug}`}
+                                onClick={closeCart}
+                                className="line-clamp-2 text-sm font-medium leading-snug hover:text-[var(--color-primary)]"
+                              >
+                                {item.name}
+                              </Link>
+                              <p className="mt-0.5 text-[11px] text-[var(--color-muted)]">
+                                {item.sku} · {item.size}
+                              </p>
+                            </div>
+                            <p className="shrink-0 text-sm font-semibold text-[var(--color-primary)]">
+                              {formatPrice(lineTotal)}
+                            </p>
+                          </div>
+
+                          <div className="mt-2.5 flex items-center justify-between">
+                            <div className="flex items-center rounded-full border border-[var(--color-border)] bg-[var(--color-cream)]/60">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon-sm"
+                                className="rounded-l-full"
+                                onClick={() =>
+                                  updateQuantity(
+                                    item.productId,
+                                    item.size,
+                                    item.quantity - 1,
+                                  )
+                                }
+                                aria-label="Decrease quantity"
+                              >
+                                <IconMinus />
+                              </Button>
+                              <span className="w-7 text-center text-sm font-medium">
+                                {item.quantity}
+                              </span>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon-sm"
+                                className="rounded-r-full"
+                                onClick={() =>
+                                  updateQuantity(
+                                    item.productId,
+                                    item.size,
+                                    item.quantity + 1,
+                                  )
+                                }
+                                aria-label="Increase quantity"
+                              >
+                                <IconPlus />
+                              </Button>
+                            </div>
+                            <Button
+                              type="button"
+                              variant="link"
+                              className="h-auto p-0 text-xs text-[var(--color-muted)]"
+                              onClick={() => removeItem(item.productId, item.size)}
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              <CartSection
+                title="Coupon code"
+                summary={
+                  appliedCoupon
+                    ? `${appliedCoupon.code} applied${discount > 0 ? ` · −${formatPrice(discount)}` : ""}`
+                    : "Tap to apply a discount"
+                }
+              >
                 <form onSubmit={applyCoupon} className="space-y-2">
-                  <Label htmlFor="cart-coupon" className="text-sm font-medium">
-                    Coupon code
-                  </Label>
                   <div className="flex gap-2">
                     <Input
                       id="cart-coupon"
@@ -272,7 +345,6 @@ export default function CartDrawer() {
                       <span>
                         <span className="font-semibold">{appliedCoupon.code}</span>{" "}
                         applied
-                        {discount > 0 ? ` (−${formatPrice(discount)})` : ""}
                       </span>
                       <button
                         type="button"
@@ -290,85 +362,111 @@ export default function CartDrawer() {
                     </p>
                   )}
                 </form>
+              </CartSection>
 
+              <CartSection
+                title="Your details"
+                summary={contactSummary}
+                defaultOpen={items.length <= 2}
+              >
                 <div className="space-y-2">
-                  <Input
-                    id="cart-name"
-                    placeholder="Your name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                  />
-                  <Input
-                    id="cart-phone"
-                    type="tel"
-                    placeholder="Phone number"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                  <Input
-                    id="cart-email"
-                    type="email"
-                    placeholder="Email (for order tracking)"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <Textarea
-                    id="cart-note"
-                    placeholder="Special requests (size, color, delivery...)"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    rows={2}
-                    className="resize-none"
-                  />
-                </div>
-
-                <Separator />
-
-                <div className="space-y-1.5 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span>{formatPrice(subtotal)}</span>
-                  </div>
-                  {discount > 0 && (
-                    <div className="flex items-center justify-between text-emerald-700">
-                      <span>Discount ({appliedCoupon?.code})</span>
-                      <span>−{formatPrice(discount)}</span>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-2">
-                    <span className="font-medium">Total</span>
-                    <span className="font-[family-name:var(--font-display)] text-xl text-[var(--color-primary)]">
-                      {formatPrice(total)}
-                    </span>
-                  </div>
-                </div>
-
-                <Button
-                  variant="whatsapp"
-                  size="pill"
-                  className="w-full"
-                  render={
-                    <a
-                      href={checkoutUrl}
-                      rel="noopener noreferrer"
-                      onClick={handleWhatsAppOrderClick}
+                  <div>
+                    <Label htmlFor="cart-name" className="sr-only">
+                      Your name
+                    </Label>
+                    <Input
+                      id="cart-name"
+                      placeholder="Your name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                     />
-                  }
-                >
-                  <IconWhatsApp className="size-5" />
-                  Order on WhatsApp
-                </Button>
+                  </div>
+                  <div>
+                    <Label htmlFor="cart-phone" className="sr-only">
+                      Phone number
+                    </Label>
+                    <Input
+                      id="cart-phone"
+                      type="tel"
+                      placeholder="Phone number"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cart-email" className="sr-only">
+                      Email
+                    </Label>
+                    <Input
+                      id="cart-email"
+                      type="email"
+                      placeholder="Email (for order tracking)"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="cart-note" className="sr-only">
+                      Special requests
+                    </Label>
+                    <Textarea
+                      id="cart-note"
+                      placeholder="Special requests (size, color, delivery...)"
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
+                      rows={2}
+                      className="resize-none"
+                    />
+                  </div>
+                </div>
+              </CartSection>
+            </div>
 
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="w-full text-xs text-muted-foreground"
-                  onClick={clearCart}
-                >
-                  Clear bag
-                </Button>
+            <div className="shrink-0 border-t border-[var(--color-border)] bg-white px-4 py-4 shadow-[0_-10px_30px_rgba(42,18,18,0.08)]">
+              <div className="space-y-1.5 text-sm">
+                <div className="flex items-center justify-between text-[var(--color-muted)]">
+                  <span>Subtotal ({itemCount} items)</span>
+                  <span>{formatPrice(subtotal)}</span>
+                </div>
+                {discount > 0 && (
+                  <div className="flex items-center justify-between text-emerald-700">
+                    <span>Discount ({appliedCoupon?.code})</span>
+                    <span>−{formatPrice(discount)}</span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between border-t border-[var(--color-border)] pt-2">
+                  <span className="font-medium">Total</span>
+                  <span className="font-[family-name:var(--font-display)] text-xl text-[var(--color-primary)]">
+                    {formatPrice(total)}
+                  </span>
+                </div>
               </div>
-            </SheetFooter>
+
+              <Button
+                variant="whatsapp"
+                size="pill"
+                className="mt-4 w-full"
+                render={
+                  <a
+                    href={checkoutUrl}
+                    rel="noopener noreferrer"
+                    onClick={handleWhatsAppOrderClick}
+                  />
+                }
+              >
+                <IconWhatsApp className="size-5" />
+                Order on WhatsApp
+              </Button>
+
+              <Button
+                type="button"
+                variant="ghost"
+                className="mt-2 w-full text-xs text-[var(--color-muted)]"
+                onClick={clearCart}
+              >
+                Clear bag
+              </Button>
+            </div>
           </>
         )}
       </SheetContent>

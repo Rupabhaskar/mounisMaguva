@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 export default function ProductCard({ product }) {
   const { addItem } = useCart();
   const discount = formatDiscount(product.originalPrice, product.price);
-  const defaultSize = product.sizes[0];
+  const defaultSize = product.sizes?.[0] || "Free Size";
   const { primary, hover } = useMemo(
     () => getProductCardImages(product),
     [product],
@@ -38,12 +38,17 @@ export default function ProductCard({ product }) {
     });
   }
 
+  function stopCardNavigation(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
   return (
     <Card className="group/card overflow-hidden border-0 bg-transparent py-0 shadow-none">
       <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-[var(--color-surface)]">
         <Link
           href={`/product/${product.slug}`}
-          className="absolute inset-x-0 top-0 bottom-14 z-0 sm:inset-0"
+          className="absolute inset-0 z-0"
           aria-label={`View ${product.name}`}
         >
           <ProductImage
@@ -79,18 +84,31 @@ export default function ProductCard({ product }) {
             -{discount}%
           </Badge>
         )}
-        <div className="absolute inset-x-0 bottom-0 z-20 p-3 sm:pointer-events-none sm:translate-y-full sm:transition-transform sm:duration-300 sm:group-hover/card:translate-y-0">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 hidden translate-y-full p-3 transition-transform duration-300 group-hover/card:translate-y-0 sm:block">
           <Button
             type="button"
             variant="secondary"
             className="pointer-events-auto w-full touch-manipulation bg-white/95 shadow-lg backdrop-blur hover:bg-[var(--color-primary)] hover:text-white"
             onClick={handleAddToCart}
+            onPointerDown={stopCardNavigation}
           >
             Add to Bag
           </Button>
         </div>
       </div>
-      <Link href={`/product/${product.slug}`} className="block px-0.5 pt-3">
+
+      <Button
+        type="button"
+        variant="brand"
+        size="block"
+        className="mt-2.5 w-full rounded-lg sm:hidden"
+        onClick={handleAddToCart}
+        onPointerDown={stopCardNavigation}
+      >
+        Add to Bag
+      </Button>
+
+      <Link href={`/product/${product.slug}`} className="block px-0.5 pt-2 sm:pt-3">
         <p className="mb-1 text-[10px] uppercase tracking-wider text-[var(--color-muted)]">
           {product.sku}
         </p>
